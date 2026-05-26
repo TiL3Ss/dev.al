@@ -1,0 +1,364 @@
+---
+import styles from './Hero.module.css';
+import { Home, Code2, FolderGit2, Mail } from 'lucide-astro';
+
+const title = "Alvaro";
+const role  = "BACKEND DEVELOPER";
+
+const navItems = [
+  { label: "HOME",     Icon: Home,        inverted: false, width: 130, height: 116, viewBox: "0 0 130 116", points: "65,6 124,110 6,110" },
+  { label: "SKILLS",   Icon: Code2,       inverted: true,  width: 110, height: 98,  viewBox: "0 0 110 98",  points: "6,6 104,6 55,92"    },
+  { label: "PROYECTS", Icon: FolderGit2,  inverted: false, width: 140, height: 124, viewBox: "0 0 140 124", points: "70,6 134,118 6,118"  },
+  { label: "CONTACT",  Icon: Mail,        inverted: true,  width: 110, height: 98,  viewBox: "0 0 110 98",  points: "6,6 104,6 55,92"    },
+];
+
+const backgroundTriangles = [
+  { class: "td01", w: 26, h: 24, points: "13,1 25,23 1,23"   },
+  { class: "td02", w: 18, h: 16, points: "9,1 17,15 1,15"    },
+  { class: "td03", w: 22, h: 20, points: "11,1 21,19 1,19"   },
+  { class: "td04", w: 16, h: 14, points: "8,1 15,13 1,13"    },
+  { class: "td05", w: 14, h: 12, points: "7,1 13,11 1,11"    },
+  { class: "td06", w: 20, h: 18, points: "10,1 19,17 1,17"   },
+  { class: "td07", w: 12, h: 11, points: "6,1 11,10 1,10"    },
+  { class: "td08", w: 24, h: 22, points: "12,1 23,21 1,21"   },
+  { class: "td09", w: 16, h: 14, points: "8,1 15,13 1,13"    },
+  { class: "td10", w: 20, h: 18, points: "10,1 19,17 1,17"   },
+  { class: "td11", w: 14, h: 13, points: "7,1 13,12 1,12"    },
+  { class: "td12", w: 18, h: 16, points: "9,1 17,15 1,15"    },
+  { class: "td13", w: 22, h: 20, points: "11,1 21,19 1,19"   },
+  { class: "td14", w: 13, h: 12, points: "6.5,1 12,11 1,11"  },
+  { class: "td15", w: 17, h: 15, points: "8.5,1 16,14 1,14"  },
+  { class: "td16", w: 15, h: 14, points: "7.5,1 14,13 1,13"  },
+];
+
+const flankLeft  = [
+  { w: 13, h: 11, points: "1,1 1,10 12,5.5"  },
+  { w: 17, h: 15, points: "1,1 1,14 16,7.5"  },
+  { w: 22, h: 19, points: "1,1 1,18 21,9.5"  },
+  { w: 28, h: 24, points: "1,1 1,23 27,12"   },
+];
+const flankRight = [
+  { w: 13, h: 11, points: "12,1 12,10 1,5.5" },
+  { w: 17, h: 15, points: "16,1 16,14 1,7.5" },
+  { w: 22, h: 19, points: "21,1 21,18 1,9.5" },
+  { w: 28, h: 24, points: "27,1 27,23 1,12"  },
+];
+---
+
+<section class={styles['p3-hero']}>
+  <div class={styles['bg-gradient']}></div>
+  <div class={styles['scan-lines']}></div>
+
+  <!-- Canvas de niebla y nubes -->
+  <canvas id="fogCanvas" class={styles['snow-canvas']}></canvas>
+
+  <!-- Luna con reloj -->
+  <div class={styles['moon']} id="darkHourToggle">
+    <svg
+      id="clockSvg"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 512 512"
+      style="position:absolute;inset:0;width:100%;height:100%;opacity:0.55;pointer-events:none;border-radius:50%;overflow:hidden;"
+    >
+      <style>
+        .ring      { fill:none; stroke:#90c4ff; stroke-width:8 }
+        .num       { fill:#90c4ff; font-size:32px; font-family:"Times New Roman"; font-weight:bold; text-anchor:middle; dominant-baseline:middle }
+        .tick      { stroke:#90c4ff; stroke-width:6; stroke-linecap:round }
+        .spike     { fill:#90c4ff }
+        .hand      { fill:#ffffff }
+        .hand-dark { fill:#0a2a6e }
+      </style>
+
+      <circle class="ring" cx="256" cy="256" r="220"/>
+      <circle class="ring" cx="256" cy="256" r="170"/>
+
+      <polygon class="spike" points="268.8,42.4 256.0,14.0 243.2,42.4"/>
+      <polygon class="spike" points="373.9,77.4 373.0,53.4 351.7,64.6"/>
+      <polygon class="spike" points="447.4,160.3 458.6,139.0 434.6,138.1"/>
+      <polygon class="spike" points="469.6,268.8 498.0,256.0 469.6,243.2"/>
+      <polygon class="spike" points="434.6,373.9 458.6,373.0 447.4,351.7"/>
+      <polygon class="spike" points="351.7,447.4 373.0,458.6 373.9,434.6"/>
+      <polygon class="spike" points="243.2,469.6 256.0,498.0 268.8,469.6"/>
+      <polygon class="spike" points="138.1,434.6 139.0,458.6 160.3,447.4"/>
+      <polygon class="spike" points="64.6,351.7 53.4,373.0 77.4,373.9"/>
+      <polygon class="spike" points="42.4,243.2 14.0,256.0 42.4,268.8"/>
+      <polygon class="spike" points="77.4,138.1 53.4,139.0 64.6,160.3"/>
+      <polygon class="spike" points="160.3,64.6 139.0,53.4 138.1,77.4"/>
+
+      <line class="tick" x1="256.0" y1="86.0"  x2="256.0" y2="116.0"/>
+      <line class="tick" x1="341.0" y1="108.8" x2="326.0" y2="134.8"/>
+      <line class="tick" x1="403.2" y1="171.0" x2="377.2" y2="186.0"/>
+      <line class="tick" x1="426.0" y1="256.0" x2="396.0" y2="256.0"/>
+      <line class="tick" x1="403.2" y1="341.0" x2="377.2" y2="326.0"/>
+      <line class="tick" x1="341.0" y1="403.2" x2="326.0" y2="377.2"/>
+      <line class="tick" x1="256.0" y1="426.0" x2="256.0" y2="396.0"/>
+      <line class="tick" x1="171.0" y1="403.2" x2="186.0" y2="377.2"/>
+      <line class="tick" x1="108.8" y1="341.0" x2="134.8" y2="326.0"/>
+      <line class="tick" x1="86.0"  y1="256.0" x2="116.0" y2="256.0"/>
+      <line class="tick" x1="108.8" y1="171.0" x2="134.8" y2="186.0"/>
+      <line class="tick" x1="171.0" y1="108.8" x2="186.0" y2="134.8"/>
+
+      <text class="num" x="256.0" y="61.0"  transform="rotate(0   256.0  61.0)">XII</text>
+      <text class="num" x="353.5" y="87.1"  transform="rotate(30  353.5  87.1)">I</text>
+      <text class="num" x="424.9" y="158.5" transform="rotate(60  424.9 158.5)">II</text>
+      <text class="num" x="451.0" y="256.0" transform="rotate(90  451.0 256.0)">III</text>
+      <text class="num" x="424.9" y="353.5" transform="rotate(120 424.9 353.5)">IV</text>
+      <text class="num" x="353.5" y="424.9" transform="rotate(150 353.5 424.9)">V</text>
+      <text class="num" x="256.0" y="451.0" transform="rotate(180 256.0 451.0)">VI</text>
+      <text class="num" x="158.5" y="424.9" transform="rotate(-150 158.5 424.9)">VII</text>
+      <text class="num" x="87.1"  y="353.5" transform="rotate(-120  87.1 353.5)">VIII</text>
+      <text class="num" x="61.0"  y="256.0" transform="rotate(-90   61.0 256.0)">IX</text>
+      <text class="num" x="87.1"  y="158.5" transform="rotate(-60   87.1 158.5)">X</text>
+      <text class="num" x="158.5" y="87.1"  transform="rotate(-30  158.5  87.1)">XI</text>
+
+      <g id="hourHand" transform="rotate(330, 256, 256)">
+        <g transform="translate(228.4, 99.6) scale(0.46)">
+          <polygon class="hand"      points="60,20 85,180 60,300 35,180"/>
+          <circle  class="hand"      cx="60" cy="340" r="20"/>
+          <rect    class="hand"      x="54" y="260" width="12" height="90" rx="6"/>
+          <circle  class="hand-dark" cx="60" cy="340" r="10"/>
+        </g>
+      </g>
+
+      <g id="minuteHand" transform="rotate(330, 256, 256)">
+        <g transform="translate(228.4, 44.4) scale(0.46)">
+          <polygon class="hand"      points="60,10 72,380 60,430 48,380"/>
+          <circle  class="hand"      cx="60" cy="460" r="20"/>
+          <circle  class="hand-dark" cx="60" cy="460" r="10"/>
+        </g>
+      </g>
+
+      <circle fill="#2F80ED" cx="256" cy="256" r="10"/>
+      <circle fill="#ffffff"  cx="256" cy="256" r="5"/>
+    </svg>
+  </div>
+
+  {backgroundTriangles.map((triangle) => (
+    <div class:list={[styles.td, styles[triangle.class]]}>
+      <svg width={triangle.w} height={triangle.h} viewBox={`0 0 ${triangle.w} ${triangle.h}`}>
+        <polygon points={triangle.points}></polygon>
+      </svg>
+    </div>
+  ))}
+
+  <div class:list={[styles.flank, styles.left]}>
+    {flankLeft.map((t) => (
+      <svg class={styles.ft} width={t.w} height={t.h} viewBox={`0 0 ${t.w} ${t.h}`}>
+        <polygon points={t.points}></polygon>
+      </svg>
+    ))}
+  </div>
+
+  <div class:list={[styles.flank, styles.right]}>
+    {flankRight.map((t) => (
+      <svg class={styles.ft} width={t.w} height={t.h} viewBox={`0 0 ${t.w} ${t.h}`}>
+        <polygon points={t.points}></polygon>
+      </svg>
+    ))}
+  </div>
+
+  <div class={styles['hero-center']}>
+    <img src="/IMG/logo.svg" alt="Portfolio Logo" class={styles['hero-logo']} />
+    <h1 class={styles['hero-name']}>{title}</h1>
+    <p class={styles['hero-name-sub']}>{role}</p>
+
+    <nav class={styles['tri-nav']} role="navigation" aria-label="Navegación principal">
+      {navItems.map((item) => (
+        <div
+          class:list={[styles['tri-item'], item.inverted && styles.inv]}
+          role="button" tabindex="0" aria-label={item.label}
+        >
+          <svg class={styles['tri-svg']} width={item.width} height={item.height} viewBox={item.viewBox}>
+            <polygon points={item.points}></polygon>
+          </svg>
+          <div class={styles['tri-content']}>
+            <div class={styles['tri-icon']}><item.Icon size={20} strokeWidth={1.5} /></div>
+            <div class={styles['tri-label']}>{item.label}</div>
+          </div>
+        </div>
+      ))}
+    </nav>
+  </div>
+
+  <div class={styles['hero-bottom']}>
+    <div class={styles['bottom-bar']}></div>
+    <div class={styles['bottom-label']}>
+      <span id="darkHourLabel">DARK HOUR · DISABLE</span>
+      <span>∆ NAVIGATE</span>
+      <span>MEMENTO MORI</span>
+    </div>
+  </div>
+
+  <script>
+  const init = () => {
+    const toggle = document.getElementById('darkHourToggle');
+    const label  = document.getElementById('darkHourLabel');
+    if (!toggle || !label) return;
+
+    /* ── Agujas ── */
+    const hourHand   = document.getElementById('hourHand');
+    const minuteHand = document.getElementById('minuteHand');
+    const CX = 256, CY = 256;
+    const CLOCK_DURATION = 2000;
+
+    const START_MIN = 330, START_HOUR = 329.5;
+    const END_MIN   = 360, END_HOUR   = 360;
+
+    const setHands = (h, m) => {
+      hourHand  ?.setAttribute('transform', `rotate(${h}, ${CX}, ${CY})`);
+      minuteHand?.setAttribute('transform', `rotate(${m}, ${CX}, ${CY})`);
+    };
+    setHands(START_HOUR, START_MIN);
+
+    let animFrame = null;
+    const animateClock = (fh, fm, th, tm) => {
+      if (animFrame) cancelAnimationFrame(animFrame);
+      const t0 = performance.now();
+      const tick = (now) => {
+        const t    = Math.min((now - t0) / CLOCK_DURATION, 1);
+        const ease = t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+        setHands(fh + (th-fh)*ease, fm + (tm-fm)*ease);
+        animFrame = t < 1 ? requestAnimationFrame(tick) : (setHands(th,tm), null);
+      };
+      animFrame = requestAnimationFrame(tick);
+    };
+
+    toggle.addEventListener('click', () => {
+      toggle.classList.add('moon-transitioning');
+      setTimeout(() => {
+        const on = document.body.classList.toggle('dark-hour');
+        label.textContent = on ? 'DARK HOUR · ACTIVE' : 'DARK HOUR · DISABLE';
+        toggle.classList.remove('moon-transitioning');
+        if (on) {
+          setHands(START_HOUR, START_MIN);
+          animateClock(START_HOUR, START_MIN, END_HOUR, END_MIN);
+        } else {
+          setHands(END_HOUR, END_MIN);
+          animateClock(END_HOUR, END_MIN, START_HOUR, START_MIN);
+        }
+      }, 260);
+    });
+
+    /* ══════════════════════════════════════════
+       NIEBLA + NUBES CERCA DE LA LUNA
+       ══════════════════════════════════════════ */
+
+    const canvas = document.getElementById('fogCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const resize = () => { canvas.width = innerWidth; canvas.height = innerHeight; };
+    resize();
+    addEventListener('resize', resize);
+
+    /* Paletas RGB para modo normal / dark-hour */
+    const PAL = {
+      fog:   { n: [100,140,220], d: [30,160,80]  },  /* niebla de fondo  */
+      cloud: { n: [140,180,255], d: [60,220,110] },   /* nubes de luna    */
+    };
+
+    /* Color actual interpolado (para transición suave al cambiar modo) */
+    let colorT   = 0;   /* 0 = normal, 1 = dark-hour */
+    let colorDir = 0;   /* velocidad de interpolación */
+
+    const lerpRGB = (a, b, t) =>
+      a.map((v, i) => Math.round(v + (b[i]-v)*t));
+
+    const rgba = (rgb, a) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
+
+    /* ── Niebla de fondo: 7 manchas grandes y elípticas ── */
+    const fogBlobs = Array.from({ length: 7 }, () => ({
+      x:      Math.random() * innerWidth,
+      y:      Math.random() * innerHeight,
+      rx:     180 + Math.random() * 120,
+      ry:     70  + Math.random() * 55,
+      alpha:  0.025 + Math.random() * 0.02,
+      vx:     (Math.random() - 0.5) * 0.16,
+      vy:     (Math.random() - 0.5) * 0.055,
+      phase:  Math.random() * Math.PI * 2,
+    }));
+
+    /* ── Nubes de luna: 6 manchas que orbitan alrededor de la luna ── */
+    const moonClouds = Array.from({ length: 6 }, (_, i) => ({
+      angle:  (i / 6) * Math.PI * 2,
+      orbitX: 72  + Math.random() * 48,    /* radio órbita horizontal */
+      orbitY: 26  + Math.random() * 18,    /* radio órbita vertical   */
+      speed:  (0.00016 + Math.random() * 0.00014) * (Math.random() > .5 ? 1 : -1),
+      r:      36  + Math.random() * 26,    /* radio del blob          */
+      alpha:  0.09 + Math.random() * 0.09,
+      phase:  Math.random() * Math.PI * 2,
+      pFreq:  0.0004 + Math.random() * 0.0004,
+    }));
+
+    /* ── Dibuja blob elíptico con gradiente radial ── */
+    const drawBlob = (x, y, rx, ry, rgb, alpha) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(1, ry / rx);
+      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+      g.addColorStop(0,    rgba(rgb, alpha));
+      g.addColorStop(0.45, rgba(rgb, alpha * 0.38));
+      g.addColorStop(1,    rgba(rgb, 0));
+      ctx.beginPath();
+      ctx.arc(0, 0, rx, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.restore();
+    };
+
+    /* Posición del centro de la luna en viewport */
+    const moonPos = () => ({ x: innerWidth / 2, y: 32 + 55 });
+
+    let prevTs = 0;
+    const draw = (ts = 0) => {
+      const dt = ts - prevTs || 16;
+      prevTs = ts;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      /* Interpolar color suavemente al cambiar modo */
+      const isDark  = document.body.classList.contains('dark-hour');
+      colorDir = isDark ? 0.015 : -0.015;
+      colorT = Math.max(0, Math.min(1, colorT + colorDir));
+
+      const fogRGB   = lerpRGB(PAL.fog.n,   PAL.fog.d,   colorT);
+      const cloudRGB = lerpRGB(PAL.cloud.n, PAL.cloud.d, colorT);
+
+      /* Niebla de fondo */
+      fogBlobs.forEach(b => {
+        b.x += b.vx;
+        b.y += b.vy;
+        const M = 320;
+        if (b.x >  canvas.width  + M) b.x = -M;
+        if (b.x < -M)                  b.x =  canvas.width  + M;
+        if (b.y >  canvas.height + M)  b.y = -M;
+        if (b.y < -M)                  b.y =  canvas.height + M;
+
+        const a = b.alpha * (0.65 + 0.35 * Math.sin(ts * 0.00025 + b.phase));
+        drawBlob(b.x, b.y, b.rx, b.ry, fogRGB, a);
+      });
+
+      /* Nubes de luna */
+      const moon = moonPos();
+      moonClouds.forEach(c => {
+        c.angle += c.speed * dt;
+        const cx = moon.x + Math.cos(c.angle) * c.orbitX;
+        const cy = moon.y + Math.sin(c.angle) * c.orbitY;
+        /* Más opaca al pasar por los lados (cos≈±1), más tenue arriba/abajo */
+        const lateralFactor = 0.55 + 0.45 * Math.abs(Math.cos(c.angle));
+        const pulseFactor   = 0.75 + 0.25 * Math.sin(ts * c.pFreq + c.phase);
+        const a = c.alpha * lateralFactor * pulseFactor;
+        drawBlob(cx, cy, c.r, c.r * 0.52, cloudRGB, a);
+      });
+
+      requestAnimationFrame(draw);
+    };
+
+    requestAnimationFrame(draw);
+  };
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('DOMContentLoaded',  init);
+  </script>
+
+</section>
