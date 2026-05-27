@@ -1,0 +1,367 @@
+/* ─────────────────────────────────────────────
+   VORTEX CONCENTRICO — PERSONA 4 STYLE
+───────────────────────────────────────────── */
+
+/* ── Contenedor ── */
+.vortex {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff;
+
+  z-index: 100;
+}
+
+/* ── Escena ── */
+.scene {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  perspective: 180px;
+  transform-style: preserve-3d;
+
+  /*
+    Cámara quieta.
+    Solo leve inclinación.
+  */
+  transform:
+    rotateX(-10deg)
+    rotateY(-105deg);
+
+  overflow: visible;
+}
+
+/* ── Cuadrados concéntricos ── */
+.ring {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  transform-style: preserve-3d;
+  will-change: transform;
+
+  /*
+    Cada cuadrado es más pequeño.
+  */
+  width: calc(900px - (var(--i) * 38px));
+  height: calc(900px - (var(--i) * 38px));
+
+  margin-left: calc((900px - (var(--i) * 38px)) / -2);
+  margin-top: calc((900px - (var(--i) * 38px)) / -2);
+
+  border-radius: 0;
+
+  /*
+    Alternancia blanco/negro.
+  */
+  background:
+    rgba(
+      calc((var(--i) % 2) * 255),
+      calc((var(--i) % 2) * 255),
+      calc((var(--i) % 2) * 255),
+      1
+    );
+
+  border:
+    2px solid
+    rgba(
+      calc(((var(--i) + 1) % 2) * 255),
+      calc(((var(--i) + 1) % 2) * 255),
+      calc(((var(--i) + 1) % 2) * 255),
+      .95
+    );
+
+  /*
+    Profundidad falsa.
+  */
+  transform:
+    translateZ(calc(var(--i) * -14px))
+    rotateZ(calc(var(--i) * 2deg));
+
+  /*
+    Movimiento circular.
+  */
+  animation:
+    ringOrbit calc(6s + (var(--i) * .08s))
+    linear infinite;
+}
+
+/* ── Movimiento orbital ── */
+@keyframes ringOrbit {
+
+  0% {
+    transform:
+      translateZ(calc(var(--i) * -14px))
+      rotateZ(calc(var(--i) * 0deg));
+  }
+
+  100% {
+    transform:
+      translateZ(calc(var(--i) * -14px))
+      rotateZ(calc(var(--i) * 360deg));
+  }
+}
+
+/* ── Núcleo ── */
+.core {
+  position: absolute;
+
+  width: 20px;
+  height: 20px;
+
+  background: #000;
+
+  border: 2px solid #fff;
+
+  z-index: 50;
+
+  animation:
+    corePulse 2s ease-in-out infinite,
+    coreRotate 4s linear infinite;
+}
+
+@keyframes corePulse {
+
+  0%,100% {
+    transform: scale(1);
+    background: #000;
+  }
+
+  50% {
+    transform: scale(1.5);
+    background: #fff;
+  }
+}
+
+@keyframes coreRotate {
+  from {
+    rotate: 0deg;
+  }
+
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ── Scanlines CRT ── */
+.scanlines {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 60;
+
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,.16) 2px,
+      rgba(0,0,0,.16) 4px
+    );
+
+  mix-blend-mode: multiply;
+
+  animation: scanMove 8s linear infinite;
+}
+
+@keyframes scanMove {
+
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 80px;
+  }
+}
+
+/* ── Noise CRT ── */
+.noise {
+  position: absolute;
+  inset: 0;
+
+  opacity: .05;
+
+  pointer-events: none;
+
+  z-index: 58;
+
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  background-size: 180px 180px;
+
+  animation: noiseShift .12s steps(1) infinite;
+}
+
+@keyframes noiseShift {
+
+  0% {
+    background-position: 0 0;
+  }
+
+  25% {
+    background-position: -30px 20px;
+  }
+
+  50% {
+    background-position: 20px -10px;
+  }
+
+  75% {
+    background-position: -15px 30px;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+
+/* ── Línea CRT ── */
+.hline {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  height: 2px;
+
+  background: rgba(255,255,255,.45);
+
+  filter: blur(.5px);
+
+  z-index: 65;
+
+  pointer-events: none;
+
+  animation: hlineMove 5s linear infinite;
+}
+
+@keyframes hlineMove {
+
+  0% {
+    top: -2%;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: .7;
+  }
+
+  100% {
+    top: 102%;
+    opacity: 0;
+  }
+}
+
+/* ── Aberración cromática ── */
+.chromaR,
+.chromaC {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  mix-blend-mode: screen;
+}
+
+.chromaR {
+  z-index: 30;
+
+  opacity: .22;
+
+  animation: chromaShift .14s steps(1) infinite;
+
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(255,0,0,.08) 2px,
+      rgba(255,0,0,.08) 4px
+    );
+}
+
+.chromaC {
+  z-index: 31;
+
+  opacity: .18;
+
+  animation:
+    chromaShift .11s steps(1) infinite reverse;
+
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,255,255,.06) 2px,
+      rgba(0,255,255,.06) 4px
+    );
+}
+
+@keyframes chromaShift {
+
+  0% {
+    transform: translate(0px, 0px);
+  }
+
+  25% {
+    transform: translate(2px, -1px);
+  }
+
+  50% {
+    transform: translate(-2px, 1px);
+  }
+
+  75% {
+    transform: translate(1px, 2px);
+  }
+
+  100% {
+    transform: translate(-1px, -2px);
+  }
+}
+
+/* ── Vignette ── */
+.vortex::after {
+  content: '';
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 90;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      transparent 38%,
+      rgba(0,0,0,.55) 72%,
+      rgba(0,0,0,.92) 100%
+    );
+}

@@ -1,8 +1,21 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
+import Hero from '../components/Hero/Hero.astro';
+import Tecs from '../components/Tecs/Tecs.astro';
+import ProjectsP5 from '../components/Projects/Project.astro';
+import TransitP3P4 from '../components/TransitP3P4/TransitP3P4.astro';
+import TransitP4P5 from '../components/TransitP4P5/TransitP4P5.astro';
 ---
 
 <Layout title="AL.DEV">
-  <Hero />
+  <section id="Home">
+    <Hero />
+  </section>
+  <TransitP3P4 />
+  <section id="Skills" style="margin: 0; padding: 0;">
+  <Tecs />
+  </section>
+  <TransitP4P5 />
+  <section id="Projects">
+  </section>
 </Layout>

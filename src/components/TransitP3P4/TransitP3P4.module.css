@@ -1,0 +1,263 @@
+.transit {
+  position:   relative;
+  width:      100%;
+  height:     35vh;
+  overflow:   hidden;
+  isolation:  isolate;
+
+  background: linear-gradient(
+    180deg,
+    #060f28        0%,
+    #060f28        8%,
+    #0a1020       20%,
+    #111820       35%,
+    #1a1a1a       50%,
+    #2a2a2a       65%,
+    #1a1408       80%,
+    #ffcc00       100%
+  );
+}
+
+/* Bloom azul centrado — espejo del ::before del Hero */
+.transit::before {
+  content:    '';
+  position:   absolute;
+  top:        -60px;
+  left:       50%;
+  transform:  translateX(-50%);
+  width:      900px;
+  height:     340px;
+  background: radial-gradient(
+    ellipse,
+    rgba(74, 144, 255, .18),
+    transparent 70%
+  );
+  filter:         blur(40px);
+  z-index:        0;
+  pointer-events: none;
+}
+
+/* Velo de fusión superior — difumina el borde con el Hero */
+.transit::after {
+  content:    '';
+  position:   absolute;
+  top:        0;
+  left:       0;
+  right:      0;
+  height:     28%;
+  background: linear-gradient(
+    180deg,
+    #060f28 0%,
+    transparent 100%
+  );
+  z-index:        8;
+  pointer-events: none;
+}
+
+/* Dark hour */
+:global(body.dark-hour) .transit {
+  background: linear-gradient(
+    180deg,
+    #081d0e        0%,
+    #081d0e        8%,
+    #0a1a10       20%,
+    #111a12       35%,
+    #1a1a1a       50%,
+    #2a2a2a       65%,
+    #1a1408       80%,
+    #ffcc00       100%
+  );
+}
+
+:global(body.dark-hour) .transit::before {
+  background: radial-gradient(
+    ellipse,
+    rgba(62, 255, 104, .14),
+    transparent 70%
+  );
+}
+
+:global(body.dark-hour) .transit::after {
+  background: linear-gradient(
+    180deg,
+    #081d0e 0%,
+    transparent 100%
+  );
+}
+
+/* ── Ruido estático ── */
+.static {
+  position:       absolute;
+  inset:          0;
+  z-index:        1;
+  opacity:        0.18;
+  mix-blend-mode: screen;
+
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  animation:       staticAnim 0.08s steps(1) infinite;
+}
+
+@keyframes staticAnim {
+  0%   { background-position:   0px   0px; opacity: 0.18; }
+  14%  { background-position: -60px -30px; opacity: 0.22; }
+  28%  { background-position:  90px  20px; opacity: 0.14; }
+  42%  { background-position: -20px  70px; opacity: 0.20; }
+  57%  { background-position:  50px -40px; opacity: 0.16; }
+  71%  { background-position: -80px  10px; opacity: 0.24; }
+  85%  { background-position:  30px  90px; opacity: 0.18; }
+  100% { background-position: -40px -60px; opacity: 0.20; }
+}
+
+/* ── Scanlines ── */
+.scanlines {
+  position:       absolute;
+  inset:          0;
+  z-index:        2;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+
+  background: repeating-linear-gradient(
+    180deg,
+    transparent,
+    transparent        2px,
+    rgba(0, 0, 0, .28) 2px,
+    rgba(0, 0, 0, .28) 4px
+  );
+  animation: scanRoll 6s linear infinite;
+}
+
+@keyframes scanRoll {
+  from { background-position: 0 0;     }
+  to   { background-position: 0 80px;  }
+}
+
+/* ── Canales de interferencia RGB ── */
+.glitchR,
+.glitchG,
+.glitchB {
+  position:       absolute;
+  left:           0;
+  right:          0;
+  height:         3px;
+  z-index:        3;
+  pointer-events: none;
+  filter:         blur(0.5px);
+}
+
+.glitchR {
+  background: rgba(255, 30,  30,  0.7);
+  animation:  glitchDrift 3.1s ease-in-out infinite;
+}
+.glitchG {
+  background: rgba(30,  255, 80,  0.6);
+  animation:  glitchDrift 4.3s ease-in-out infinite reverse;
+  animation-delay: -1.2s;
+}
+.glitchB {
+  background: rgba(60,  120, 255, 0.65);
+  animation:  glitchDrift 2.7s ease-in-out infinite;
+  animation-delay: -0.7s;
+}
+
+@keyframes glitchDrift {
+  0%   { top: 10%;  opacity: 0;    transform: scaleX(1);    }
+  8%   { top: 28%;  opacity: 1;    transform: scaleX(0.7);  }
+  20%  { top: 52%;  opacity: 0.4;  transform: scaleX(1.1);  }
+  35%  { top: 68%;  opacity: 0;    }
+  55%  { top: 38%;  opacity: 0.8;  transform: scaleX(0.85); }
+  70%  { top: 80%;  opacity: 0.3;  }
+  88%  { top: 20%;  opacity: 0.9;  transform: scaleX(1.05); }
+  100% { top: 10%;  opacity: 0;    transform: scaleX(1);    }
+}
+
+/* ── Barras arcoíris emergiendo desde abajo ── */
+.rainbowBars {
+  position:       absolute;
+  bottom:         0;
+  left:           0;
+  right:          0;
+  height:         42%;
+  z-index:        4;
+  display:        flex;
+  align-items:    flex-end;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.rainbowBars > div {
+  flex:      1;
+  animation: barRise 3s ease-in-out infinite alternate;
+}
+
+.rb1 { background: #ff0044; height: 55%; animation-delay: 0s;    }
+.rb2 { background: #ff6600; height: 70%; animation-delay: -0.4s; }
+.rb3 { background: #ffdd00; height: 85%; animation-delay: -0.8s; }
+.rb4 { background: #00ee66; height: 60%; animation-delay: -1.2s; }
+.rb5 { background: #00aaff; height: 75%; animation-delay: -1.6s; }
+.rb6 { background: #cc00ff; height: 50%; animation-delay: -2.0s; }
+.rb7 { background: #ff0044; height: 65%; animation-delay: -2.4s; }
+
+@keyframes barRise {
+  0%   { transform: scaleY(0.3); opacity: 0.3; }
+  100% { transform: scaleY(1.0); opacity: 0.9; }
+}
+
+/* ── Línea horizontal de señal ── */
+.hline {
+  position:       absolute;
+  left:           0;
+  right:          0;
+  height:         2px;
+  z-index:        5;
+  pointer-events: none;
+  background:     rgba(255, 220, 80, 0.6);
+  filter:         blur(1px);
+  animation:      hlineDrift 5s linear infinite;
+}
+
+@keyframes hlineDrift {
+  0%   { top: 0%;   opacity: 0;   }
+  5%   { opacity: 1; }
+  90%  { opacity: 0.7; }
+  100% { top: 100%; opacity: 0;   }
+}
+
+/* ── Etiqueta de canal ── */
+.channelTag {
+  position:       absolute;
+  top:            50%;
+  left:           50%;
+  transform:      translate(-50%, -50%);
+  z-index:        6;
+
+  font-family:    'IBM Plex Sans', monospace;
+  font-size:      10px;
+  letter-spacing: 6px;
+  color:          rgba(255, 220, 80, 0.45);
+  text-transform: uppercase;
+  white-space:    nowrap;
+  text-shadow:    0 0 10px rgba(255, 200, 0, 0.4);
+  animation:      tagFlicker 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes tagFlicker {
+  0%,  92%, 98%, 100% { opacity: 0.45; }
+  93%, 97%             { opacity: 0.05; }
+  95%                  { opacity: 0.25; }
+}
+
+:global(body.dark-hour) .transit {
+  background: linear-gradient(
+    180deg,
+    #081d0e        0%,
+    #081d0e       8%,
+    #0a1a10       20%,
+    #111a12       35%,
+    #1a1a1a       50%,
+    #2a2a2a       65%,
+    #1a1408       80%,
+    #ffcc00       100%
+  );
+}

@@ -14,6 +14,10 @@
   font-family: 'Arsenal', sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Bloom global detrás de la luna */
 .p3-hero::before {
   content: '';
@@ -63,6 +67,12 @@
   inset:    0;
 
   background:
+    /* Fade hacia abajo — fusión con el separador */
+    linear-gradient(
+      0deg,
+      #060f28 0%,
+      transparent 18%
+    ),
     radial-gradient(
       ellipse 80% 60% at 50% 110%,
       var(--bg2) 0%,
@@ -87,7 +97,35 @@
 
   z-index: 0;
 }
-
+:global(body.dark-hour) .bg-gradient {
+  background:
+    linear-gradient(
+      0deg,
+      #081d0e 0%,
+      transparent 18%
+    ),
+    radial-gradient(
+      ellipse 80% 60% at 50% 110%,
+      var(--bg2) 0%,
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 50% 100%,
+      var(--accent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 30% 25% at 50% 98%,
+      var(--primary) 0%,
+      transparent 45%
+    ),
+    linear-gradient(
+      180deg,
+      var(--bg)  0%,
+      var(--bg2) 40%,
+      var(--bg3) 100%
+    );
+}
 /* ───────────────────────────── */
 /* MOON */
 /* ───────────────────────────── */
@@ -599,105 +637,92 @@
 
 @media (max-width: 768px) {
 
-  .moon {
-    width:  72px;
-    height: 72px;
-    top:    20px;
-  }
-
-  .hero-logo {
-    width:  22%;
-    height: 22%;
-  }
-
-  .hero-name {
-    font-size:      34px;
-    letter-spacing: 4px;
-  }
-
-  .hero-name-sub {
-    font-size:      12px;
-    letter-spacing: 7px;
-    margin-bottom:  32px;
-  }
-
-  .flank { display: none; }
-
-  .td01, .td07, .td08, .td12,
-  .td13, .td14, .td15, .td16 { display: none; }
-
   .tri-nav {
-    display:               grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows:    auto auto;
-    align-items:           center;
-    justify-items:         center;
-    gap:                   4px 0;
+    position: relative;
+    display:  block;
+    width:    180px;
+    height:   200px;
+    margin:   0 auto;
   }
 
   .tri-item:nth-child(1),
   .tri-item:nth-child(2),
   .tri-item:nth-child(3),
   .tri-item:nth-child(4) {
-    margin: 0;
+    position: absolute;
+    margin:   0 !important;
+    overflow: visible;
+    clip-path: none;
+    width:  auto;
+    height: auto;
   }
 
-  .tri-item:nth-child(1) .tri-svg,
-  .tri-item:nth-child(3) .tri-svg {
-    transform:        scale(.72);
-    transform-origin: center;
+  /* ▲ izquierda arriba */
+  .tri-item:nth-child(1) { top: -30%; left: 0; }
+
+  /* ▲ derecha arriba */
+  .tri-item:nth-child(2) { top: -17.5%; right: 8%; }
+
+  /* ▼ izquierda abajo */
+  .tri-item:nth-child(3) { bottom: -25%; left: -2%; }
+
+  /* ▼ derecha abajo */
+  .tri-item:nth-child(4) { bottom: -15%; right: 8%; }
+
+  .tri-item {
+    pointer-events: none;
+    width: fit-content;
+    height: fit-content;
   }
 
-  .tri-item:nth-child(2) .tri-svg,
-  .tri-item:nth-child(4) .tri-svg {
-    transform:        scale(.85);
-    transform-origin: center;
+  .tri-item:nth-child(1) {
+    transform: translateX(18px);
   }
 
-  .tri-item:nth-child(1):hover .tri-svg,
-  .tri-item:nth-child(3):hover .tri-svg { transform: scale(.77) !important; }
-
-  .tri-item:nth-child(2):hover .tri-svg,
-  .tri-item:nth-child(4):hover .tri-svg { transform: scale(.90) !important; }
-
-  .tri-content               { transform: translate(-50%, -40%);   }
-  .tri-item.inv .tri-content { transform: translate(-50%, -85%);   }
-
-  .tri-icon { font-size: 18px; }
-
-  .tri-label {
-    font-size:      8px;
-    letter-spacing: 2px;
+  .tri-item:nth-child(3) {
+    transform: translateX(-18px);
   }
 
-  .bottom-label {
-    font-size:      7px;
-    letter-spacing: 2px;
-    padding:        5px 16px;
+  .tri-svg {
+    pointer-events: auto;
+    overflow: visible;
   }
+  /* Contenido */
+  .tri-item:nth-child(1) .tri-content { transform: translate(-50%, 25%);   }
+  .tri-item:nth-child(2) .tri-content { transform: translate(-50%, 230%);  }
+  .tri-item:nth-child(3) .tri-content { transform: translate(-50%, -400%); }
+  .tri-item:nth-child(4) .tri-content { transform: translate(-50%, -125%); }
+
+  /* Escalas */
+  .tri-item:nth-child(1) .tri-svg { transform: scale(0.64);               transform-origin: bottom center; }
+  .tri-item:nth-child(2) .tri-svg { transform: scale(0.75) rotate(180deg); transform-origin: bottom center; }
+  .tri-item:nth-child(3) .tri-svg { transform: scale(0.59) rotate(180deg); transform-origin: top center;    }
+  .tri-item:nth-child(4) .tri-svg { transform: scale(0.75);               transform-origin: top center;    }
+
+  /* Hover */
+  .tri-item:nth-child(1):hover .tri-svg { transform: scale(0.68);                transform-origin: bottom center; }
+  .tri-item:nth-child(2):hover .tri-svg { transform: scale(0.79) rotate(180deg); transform-origin: bottom center; }
+  .tri-item:nth-child(3):hover .tri-svg { transform: scale(0.63) rotate(180deg); transform-origin: top center;    }
+  .tri-item:nth-child(4):hover .tri-svg { transform: scale(0.79);                transform-origin: top center;    }
+
+  .tri-icon  { font-size: 18px; }
+  .tri-label { font-size: 8px; letter-spacing: 2px; }
+  .bottom-label { font-size: 7px; letter-spacing: 2px; padding: 5px 16px; }
 }
 
 @media (max-width: 480px) {
-
-  .hero-name {
-    font-size:      26px;
-    letter-spacing: 3px;
+  .tri-nav {
+    transform: scale(0.8); 
+    
+    transform-origin: center center; 
+    
+    margin: -10px auto; 
   }
 
-  .hero-name-sub {
-    font-size:      10px;
-    letter-spacing: 5px;
+  .tri-label {
+    font-size: 7.5px; 
   }
-
-  .tri-item:nth-child(1) .tri-svg,
-  .tri-item:nth-child(3) .tri-svg { transform: scale(.6); }
-
-  .tri-item:nth-child(2) .tri-svg,
-  .tri-item:nth-child(4) .tri-svg { transform: scale(.6); }
-
-  .tri-item:hover .tri-svg { transform: scale(.65) !important; }
 }
-
 /* ───────────────────────────── */
 /* DARK HOUR */
 /* ───────────────────────────── */

@@ -1,0 +1,396 @@
+---
+import styles from './Tecs.module.css';
+import Arcoiris from '../arcoiris/arcoiris.astro';
+import { Flame, Clover, Crown, ChessKing } from 'lucide-astro';
+import Vortex from '../Vortex/Vortex.astro';
+
+const arcanas = [
+  {
+    roman:    'I',
+    arcana:   'The Magician',
+    subtitle: 'FRONTEND',
+    Icon:     Flame,
+    number:   'I',
+    hp:       88,
+    techs: [
+      { name: 'JavaScript', rank: 8 },
+      { name: 'TypeScript', rank: 7 },
+      { name: 'React',      rank: 7 },
+      { name: 'Astro',      rank: 5 },
+      { name: 'Next.js',    rank: 7 },
+      { name: 'Dart',       rank: 5 },
+      { name: 'C#',         rank: 6 },
+    ],
+  },
+  {
+    roman:    'II',
+    arcana:   'The Fortune',
+    subtitle: 'BACKEND',
+    Icon:     Clover,
+    number:   'II',
+    hp:       74,
+    techs: [
+      { name: 'Node.js',    rank: 7 },
+      { name: 'PHP',        rank: 5 },
+      { name: 'TypeScript', rank: 7 },
+      { name: 'Next.js',    rank: 7 },
+      { name: 'C#',         rank: 6 },
+    ],
+  },
+  {
+    roman:    'III',
+    arcana:   'The Empress',
+    subtitle: 'DATABASES',
+    Icon:     ChessKing,
+    number:   'III',
+    hp:       65,
+    techs: [
+      { name: 'MySQL',      rank: 8 },
+      { name: 'MongoDB',    rank: 6 },
+      { name: 'SQLite',     rank: 8 },
+      { name: 'Firebase',   rank: 6 },
+      { name: 'PostgreSQL', rank: 8 },
+    ],
+  },
+  {
+    roman:    'IV',
+    arcana:   'The Emperor',
+    subtitle: 'TOOLS',
+    Icon:     Crown,
+    number:   'IV',
+    hp:       91,
+    techs: [
+      { name: 'VSCode',   rank: 10 },
+      { name: 'GitHub',   rank: 7 },
+      { name: 'Docker',   rank: 5 },
+      { name: 'Vercel',   rank: 8 },
+      { name: 'Postman',  rank: 8 },
+      { name: 'ESLint',   rank: 6 },
+      { name: 'pnpm',     rank: 7 },
+      { name: 'Planner',  rank: 8 },
+    ],
+  },
+];
+---
+
+<section class={styles['tecs-section']}>
+
+  <!-- Fondo arcoíris -->
+  <div class={styles['arcoiris-bg']}>
+    <Arcoiris />
+  </div>
+
+  <!-- ══ ANTENA SVG ══ -->
+  <div class={styles['tv-antenna-wrap']}>
+    <svg class={styles['antenna-svg']} viewBox="0 0 220 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Base domo -->
+      <ellipse cx="110" cy="94" rx="28" ry="10" fill="#2e2e2e" stroke="#1a1a1a" stroke-width="2"/>
+      <!-- Vástago central -->
+      <rect x="107" y="70" width="6" height="26" rx="3" fill="#3a3a3a"/>
+      <!-- Antena izquierda trapezoidal -->
+      <polygon points="110,72  60,4  42,18  100,76" fill="#2a2a2a" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+      <!-- Antena derecha trapezoidal -->
+      <polygon points="110,72  160,4  178,18  120,76" fill="#2a2a2a" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+      <!-- Highlight interno izquierda -->
+      <polygon points="107,74  65,10  55,16  103,74" fill="#3e3e3e" opacity="0.5"/>
+      <!-- Highlight interno derecha -->
+      <polygon points="113,74  155,10  165,16  117,74" fill="#3e3e3e" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <!-- ══ GABINETE DE TV ══ -->
+  <div class={styles['tv-cabinet']}>
+
+    <!-- ══ ZONA PRINCIPAL ══ -->
+    <div class={styles['tv-main']}>
+
+      <!-- ══ BISEL CRT ══ -->
+      <div class={styles['tv-bezel']}>
+
+        <div class={styles['tv-screen']}>
+
+          <!-- Efectos CRT -->
+          <div class={styles['crt-scanlines']}></div>
+          <div class={styles['crt-noise']}></div>
+          <div class={styles['crt-flicker']}></div>
+          <div class={styles['crt-hline']}></div>
+
+          <!-- Barra arcoíris arriba -->
+          <div class={styles['rainbow-bar']}></div>
+
+          <!-- HUD de pantalla -->
+          <div class={styles['tv-hud']}>
+            <span class={styles['hud-left']} id="tecsTime">00:00</span>
+            <span class={styles['hud-center']}>— ARCANA COMPENDIUM —</span>
+            <span class={styles['hud-right']} id="tecsChannel">CH·04</span>
+          </div>
+
+          <!-- Header -->
+          <header class={styles['tecs-header']}>
+            <h2 class={styles['tecs-title']}>
+              SKILLS <span> &amp; TECH</span>
+            </h2>
+            <p class={styles['tecs-subtitle']}>SOCIAL LINKS · SELECT AN ARCANA</p>
+          </header>
+
+          <!-- ══ CARTAS FLIP ══ -->
+          <div class={styles['cards-grid']}>
+            {arcanas.map((arc) => (
+              <div
+                class={styles['flip-card']}
+                role="button"
+                tabindex="0"
+                aria-label={`${arc.arcana} — ${arc.subtitle}`}
+                data-flip-card
+              >
+                <div class={styles['flip-card-inner']}>
+
+                  <!-- ── CARA FRONTAL ── -->
+                  <div class={`${styles['flip-face']} ${styles['face-front']}`}>
+                    <div class={styles['card-frame']}></div>
+                    <div class={styles['card-back-pattern']}></div>
+                    <div class={styles['card-scanline']}></div>
+                    <div class={styles['card-glitch']}></div>
+                    <div class={styles['card-number-bg']}>{arc.number}</div>
+
+                    <span class={styles['card-roman']}>{arc.roman}</span>
+
+                    <div class={styles['card-sigil-wrap']}>
+                      <arc.Icon
+                        size={38}
+                        strokeWidth={1.2}
+                        class={styles['card-sigil-icon']}
+                      />
+                    </div>
+
+                    <div class={styles['card-divider']}></div>
+
+                    <span class={styles['card-arcana']}>{arc.arcana}</span>
+                    <span class={styles['card-subtitle']}>{arc.subtitle}</span>
+
+                    <span class={styles['card-flip-hint']}>▶ REVEAL ◀</span>
+                  </div>
+
+                  <!-- ── CARA TRASERA (estilo Pokémon) ── -->
+                  <div class={`${styles['flip-face']} ${styles['flip-face-back']} ${styles['face-back']}`}>
+                    <div class={styles['card-frame']}></div>
+                    <div class={styles['card-scanline']}></div>
+
+                    <!-- Header Pokémon -->
+                    <div class={styles['poke-header']}>
+                      <span class={styles['poke-name']}>{arc.arcana}</span>
+                      <span class={styles['poke-type']}>{arc.subtitle}</span>
+                    </div>
+
+                    <!-- Cuadro de imagen del arcano -->
+                    <div class={styles['poke-image-box-inner']}>
+                      <arc.Icon
+                        size={52}
+                        strokeWidth={1}
+                        class={styles['poke-sigil-icon']}
+                      />
+                      <div class={styles['poke-img-scan']}></div>
+                    </div>
+
+                    <!-- Separador -->
+                    <div class={styles['poke-divider']}></div>
+
+                    <!-- Lista de techs con barra de rank -->
+                    <div class={styles['poke-moves']}>
+                      {arc.techs.map((t) => (
+                        <div class={styles['poke-move-row']}>
+                          <span class={styles['poke-move-dot']}></span>
+                          <span class={styles['poke-move-name']}>{t.name}</span>
+                          <div class={styles['poke-move-rank']}>
+                            <div class={styles['rank-bar']}>
+                              {Array.from({length: 10}).map((_, i) => (
+                                <div
+                                  class={`${styles['rank-pip']} ${i < t.rank ? styles['filled'] : ''}`}
+                                ></div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <!-- Footer Pokémon con HP bar -->
+                    <div class={styles['poke-footer']}>
+                      <span class={styles['poke-footer-text']}>
+                        {arc.roman} · ARCANA
+                      </span>
+                      <div class={styles['poke-hp-bar']}>
+                        <span class={styles['poke-hp-label']}>EXP</span>
+                        <div class={styles['poke-hp-track']}>
+                          <div
+                            class={styles['poke-hp-fill']}
+                            style={`width: ${arc.hp}%`}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <!-- /cara trasera -->
+
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <!-- Footer pantalla -->
+          <div class={styles['tecs-screen-footer']}>
+             &nbsp; PERSONA 4 GOLDEN · SOCIAL LINK COMPENDIUM &nbsp;
+          </div>
+
+          <!-- Barra arcoíris abajo -->
+          <div class={styles['rainbow-bar']}></div>
+
+        </div><!-- /tv-screen -->
+
+      </div><!-- /tv-bezel -->
+
+      <!--
+        ══ OVERLAY CANAL 5 ══
+        Hijo de tv-main (no de tv-bezel) para escapar de los ::before/::after
+        del bezel que tienen z-index 25/26 y tapaban el overlay.
+        tv-main tiene position:relative para que inset:0 lo ancle bien.
+      -->
+      <div class={styles['channel-overlay']} id="channelOverlay">
+        <Vortex />
+        <div class={styles['channel-tag']}>CH·05 · MIDNIGHT CHANNEL</div>
+      </div>
+
+    </div><!-- /tv-main -->
+
+    <!-- ══ PANEL LATERAL DE CONTROLES ══ -->
+    <div class={styles['tv-controls-panel']}>
+
+      <!-- Rejilla de audio -->
+      <div class={styles['panel-grille']}>
+        {Array.from({length: 10}).map(() => (
+          <div class={styles['grille-row']}>
+            <div class={styles['grille-hole']}></div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Zona inferior: botones + perilla -->
+      <div class={styles['panel-bottom']}>
+
+        <!-- Botones de canal -->
+        <div class={styles['panel-channel-btns']}>
+          <div class={styles['ch-btn']} id="chPrev" aria-label="Canal anterior">
+            <div class={`${styles['ch-btn-arrow']} ${styles['arrow-left']}`}></div>
+          </div>
+          <div class={styles['ch-btn']} id="chNext" aria-label="Canal siguiente">
+            <div class={`${styles['ch-btn-arrow']} ${styles['arrow-right']}`}></div>
+          </div>
+        </div>
+
+        <!-- Perilla engranaje SVG -->
+        <div class={styles['panel-knob-wrap']}>
+          <svg class={styles['panel-knob-svg']} viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="knobGrad" cx="38%" cy="35%" r="65%">
+                <stop offset="0%"   stop-color="#3a3200"/>
+                <stop offset="45%"  stop-color="#1e1c00"/>
+                <stop offset="100%" stop-color="#0f0e00"/>
+              </radialGradient>
+            </defs>
+            {Array.from({length: 14}).map((_, i) => {
+              const angle = (i * 360 / 14) * (Math.PI / 180);
+              const x1 = 40 + Math.cos(angle) * 36;
+              const y1 = 40 + Math.sin(angle) * 36;
+              const x2 = 40 + Math.cos(angle) * 29;
+              const y2 = 40 + Math.sin(angle) * 29;
+              return (
+                <line x1={x1} y1={y1} x2={x2} y2={y2}
+                  stroke="#3a3020" stroke-width="5" stroke-linecap="round"/>
+              );
+            })}
+            <circle cx="40" cy="40" r="28" fill="url(#knobGrad)" stroke="#0e0c08" stroke-width="3"/>
+            <circle cx="40" cy="40" r="22" fill="none" stroke="rgba(255,200,0,0.08)" stroke-width="1"/>
+            <rect x="38.5" y="14" width="3" height="11" rx="1.5" fill="rgba(255,220,0,0.85)"/>
+          </svg>
+          <span class={styles['panel-knob-label']}>VOL</span>
+        </div>
+
+      </div>
+
+    </div><!-- /tv-controls-panel -->
+
+  </div><!-- /tv-cabinet -->
+
+  <!-- ══ PATAS ══ -->
+  <div class={styles['tv-legs']}>
+    <div class={styles['tv-leg']}></div>
+    <div class={styles['tv-leg']}></div>
+  </div>
+
+  <script>
+    const init = () => {
+
+      /* ── Reloj HUD ── */
+      const timeEl = document.getElementById('tecsTime');
+      const tick = () => {
+        if (!timeEl) return;
+        const d = new Date();
+        const h = String(d.getHours()).padStart(2, '0');
+        const m = String(d.getMinutes()).padStart(2, '0');
+        timeEl.textContent = `${h}:${m}`;
+      };
+      tick();
+      setInterval(tick, 10000);
+
+      /* ── Flip cards ── */
+      const cards = document.querySelectorAll('[data-flip-card]');
+      cards.forEach((card) => {
+        const flip = () => {
+          const isFlipped = card.getAttribute('data-flipped') === 'true';
+          cards.forEach((c) => c.removeAttribute('data-flipped'));
+          if (!isFlipped) card.setAttribute('data-flipped', 'true');
+        };
+        card.addEventListener('click', flip);
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            flip();
+          }
+        });
+      });
+
+      /* ── Cambio de canal ── */
+      const chPrev    = document.getElementById('chPrev');
+      const chNext    = document.getElementById('chNext');
+      const chDisplay = document.getElementById('tecsChannel');
+      const overlay   = document.getElementById('channelOverlay');
+
+      let currentCh = 4;
+
+      const setChannel = (ch) => {
+        currentCh = ch;
+        chDisplay.textContent = `CH·0${ch}`;
+
+        if (ch === 5) {
+          overlay.classList.add('visible');
+        } else {
+          overlay.classList.remove('visible');
+        }
+      };
+
+      chNext?.addEventListener('click', () => {
+        if (currentCh < 5) setChannel(currentCh + 1);
+      });
+
+      chPrev?.addEventListener('click', () => {
+        if (currentCh > 4) setChannel(currentCh - 1);
+      });
+
+    };
+
+    document.addEventListener('astro:page-load', init, { once: true });
+    document.addEventListener('DOMContentLoaded',  init);
+  </script>
+
+</section>

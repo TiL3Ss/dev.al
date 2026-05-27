@@ -6,10 +6,10 @@ const title = "Alvaro";
 const role  = "BACKEND DEVELOPER";
 
 const navItems = [
-  { label: "HOME",     Icon: Home,        inverted: false, width: 130, height: 116, viewBox: "0 0 130 116", points: "65,6 124,110 6,110" },
-  { label: "SKILLS",   Icon: Code2,       inverted: true,  width: 110, height: 98,  viewBox: "0 0 110 98",  points: "6,6 104,6 55,92"    },
-  { label: "PROYECTS", Icon: FolderGit2,  inverted: false, width: 140, height: 124, viewBox: "0 0 140 124", points: "70,6 134,118 6,118"  },
-  { label: "CONTACT",  Icon: Mail,        inverted: true,  width: 110, height: 98,  viewBox: "0 0 110 98",  points: "6,6 104,6 55,92"    },
+  { label: "HOME",    href:"#Home" ,Icon: Home,        inverted: false, width: 130, height: 116, viewBox: "0 0 130 116", points: "65,6 124,110 6,110" },
+  { label: "SKILLS",   href:"#Skills" ,Icon: Code2,       inverted: true,  width: 110, height: 98,  viewBox: "0 0 110 98",  points: "6,6 104,6 55,92"    },
+  { label: "PROYECTS", href:"#Projects" ,Icon: FolderGit2,  inverted: false, width: 140, height: 124, viewBox: "0 0 140 124", points: "70,6 134,118 6,118"  },
+  { label: "CONTACT",  href:"#Contact" ,Icon: Mail,        inverted: true,  width: 110, height: 98,  viewBox: "0 0 110 98",  points: "6,6 104,6 55,92"    },
 ];
 
 const backgroundTriangles = [
@@ -164,9 +164,10 @@ const flankRight = [
 
     <nav class={styles['tri-nav']} role="navigation" aria-label="Navegación principal">
       {navItems.map((item) => (
-        <div
+        <a
           class:list={[styles['tri-item'], item.inverted && styles.inv]}
           role="button" tabindex="0" aria-label={item.label}
+          href={item.href}
         >
           <svg class={styles['tri-svg']} width={item.width} height={item.height} viewBox={item.viewBox}>
             <polygon points={item.points}></polygon>
@@ -175,7 +176,7 @@ const flankRight = [
             <div class={styles['tri-icon']}><item.Icon size={20} strokeWidth={1.5} /></div>
             <div class={styles['tri-label']}>{item.label}</div>
           </div>
-        </div>
+        </a>
       ))}
     </nav>
   </div>

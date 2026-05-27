@@ -1,0 +1,479 @@
+/* ═══════════════════════════════════════════════════════════════
+   ProjectsP5.module.css  —  Persona 5 Royal aesthetic
+   Paleta estricta: #111111 | #ffffff | #dc0000
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Imports ── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Black+Han+Sans&family=Barlow+Condensed:ital,wght@1,900&display=swap');
+
+/* ── Custom properties ── */
+.projectsSection {
+  --p5-black:  #111111;
+  --p5-white:  #ffffff;
+  --p5-red:    #dc0000;
+
+  --border-w:  3px;
+  --card-gap:  3.5rem;
+
+  background: var(--p5-black);
+  padding: 4rem 2rem 6rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle grain overlay for that P5 "printed" feel */
+.projectsSection::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LIST
+   ═══════════════════════════════════════════════════════════════ */
+.projectsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin-inline: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARD
+   ═══════════════════════════════════════════════════════════════ */
+.projectCard {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOGO WRAPPER  — triángulo poligonal con hover hexagrama
+   ═══════════════════════════════════════════════════════════════ */
+.logoWrapper {
+  position: relative;
+  flex-shrink: 0;
+  width: 130px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  z-index: 2;
+  /* Pull slightly right so it overlaps the zigzag edge */
+  margin-right: -18px;
+}
+
+/* Primary upward-pointing triangle */
+.logoPolygon {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  background: var(--p5-black);
+  border: var(--border-w) solid var(--p5-white);
+  /* Trick: use outline + clip to fake a bordered polygon */
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  transition: transform 0.25s cubic-bezier(.22,1,.36,1);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Border emulated via a white base layer + black inner */
+.logoWrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  background: var(--p5-white);
+  z-index: 0;
+  transition: transform 0.25s cubic-bezier(.22,1,.36,1),
+              clip-path 0.3s cubic-bezier(.22,1,.36,1);
+}
+
+.logoPolygon {
+  inset: 3px;
+  z-index: 1;
+}
+
+.logoImg {
+  width: 55%;
+  height: 55%;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+  filter: grayscale(1) contrast(1.3);
+  transition: filter 0.2s;
+}
+
+/* Second inverted triangle — hidden by default, forms hexagram on hover */
+.logoPolygonInverted {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 100%, 100% 0%, 0% 0%);
+  background: var(--p5-red);
+  opacity: 0;
+  transform: scale(0.6) rotate(0deg);
+  transition: opacity 0.25s, transform 0.3s cubic-bezier(.22,1,.36,1);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* "Link" label */
+.logoLinkLabel {
+  position: absolute;
+  bottom: -1.4rem;
+  left: 50%;
+  transform: translateX(-50%) rotate(-4deg);
+  font-family: 'Bebas Neue', 'Black Han Sans', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  color: var(--p5-white);
+  background: var(--p5-black);
+  border: 2px solid var(--p5-white);
+  padding: 1px 8px;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.15s;
+  z-index: 10;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ── Hover states ── */
+.logoWrapper:hover .logoPolygonInverted {
+  opacity: 0.9;
+  transform: scale(1) rotate(180deg);
+}
+
+.logoWrapper:hover::before {
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%,
+                     50% 100%, 100% 0%, 0% 0%);
+  background: var(--p5-white);
+}
+
+.logoWrapper:hover .logoLinkLabel {
+  opacity: 1;
+  animation: labelBlink 0.6s step-end infinite;
+}
+
+.logoWrapper:hover .logoImg {
+  filter: grayscale(0) contrast(1.1) brightness(1.2);
+}
+
+@keyframes labelBlink {
+  0%, 100% { background: var(--p5-black); color: var(--p5-white); }
+  50%       { background: var(--p5-red);  color: var(--p5-white); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DIALOG BALLOON  — globo asimétrico estilo P5
+   ═══════════════════════════════════════════════════════════════ */
+.dialogBalloon {
+  position: relative;
+  flex: 1;
+  min-height: 140px;
+  background: var(--p5-black);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2.2rem 1.5rem 1.5rem 2.5rem;
+
+  /*
+    Asymmetric speech-bubble shape.
+    Left side: straight vertical (connects to logo).
+    Right side: angled cutoff pointing inward.
+    Top-left: small chamfer.
+  */
+  clip-path: polygon(
+    0% 8%,
+    2% 0%,
+    88% 0%,
+    100% 8%,
+    100% 85%,
+    96% 100%,
+    4% 100%,
+    0% 92%
+  );
+
+  /* White border emulation: white base behind, black inner */
+  transition: transform 0.22s cubic-bezier(.22,1,.36,1),
+              box-shadow 0.22s;
+  z-index: 1;
+}
+
+/* White border layer behind the balloon */
+.dialogBalloon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(
+    0% 8%,
+    2% 0%,
+    88% 0%,
+    100% 8%,
+    100% 85%,
+    96% 100%,
+    4% 100%,
+    0% 92%
+  );
+  background: var(--p5-white);
+  z-index: -1;
+}
+
+/* Black inset to create the border effect */
+.dialogBalloon::after {
+  content: '';
+  position: absolute;
+  inset: var(--border-w);
+  clip-path: polygon(
+    0% 8%,
+    2% 0%,
+    88% 0%,
+    100% 8%,
+    100% 85%,
+    96% 100%,
+    4% 100%,
+    0% 92%
+  );
+  background: var(--p5-black);
+  z-index: -1;
+}
+
+.projectCard:hover .dialogBalloon {
+  transform: translate(4px, -3px) skewX(-0.5deg);
+}
+
+/* ── Zigzag left connector ── */
+.zigzagLeft {
+  position: absolute;
+  left: -20px;
+  top: 0;
+  height: 100%;
+  width: 32px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.zigzagLeft svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TITLE BOX  — caja flotante inclinada del nombre del proyecto
+   ═══════════════════════════════════════════════════════════════ */
+.titleBox {
+  position: absolute;
+  top: -14px;
+  left: 2rem;
+  background: var(--p5-white);
+  padding: 3px 14px 2px;
+  transform: rotate(-6deg) skewX(-4deg);
+  z-index: 5;
+  box-shadow: 3px 3px 0 var(--p5-black), 5px 5px 0 var(--p5-red);
+  /* Chamfered corners */
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  transition: box-shadow 0.2s;
+}
+
+.projectCard:hover .titleBox {
+  box-shadow: 4px 4px 0 var(--p5-black), 7px 7px 0 var(--p5-red);
+}
+
+.titleText {
+  font-family: 'Bebas Neue', 'Black Han Sans', sans-serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  color: var(--p5-black);
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DESCRIPTION TEXT
+   ═══════════════════════════════════════════════════════════════ */
+.descriptionText {
+  font-family: 'Barlow Condensed', 'Bebas Neue', sans-serif;
+  font-size: 0.97rem;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--p5-white);
+  flex: 1;
+  margin: 0;
+  padding-top: 0.5rem;
+  max-width: 55%;
+  position: relative;
+  z-index: 2;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TECH STAR  — estrella pentagonal con etiquetas alrededor
+   ═══════════════════════════════════════════════════════════════ */
+.techStarWrapper {
+  position: relative;
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* Helper mixin via custom props — 5-point star clip-path */
+/* Star outer → inner concentric layers give the "radar chart" look */
+.starOuter,
+.starMid,
+.starInner,
+.starCore {
+  position: absolute;
+  /* 5-point star clip-path (generic ratio) */
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2%  35%,
+    39% 35%
+  );
+}
+
+.starOuter {
+  width: 115px;
+  height: 115px;
+  background: var(--p5-white);
+}
+
+.starMid {
+  width: 95px;
+  height: 95px;
+  background: var(--p5-black);
+}
+
+.starInner {
+  width: 72px;
+  height: 72px;
+  background: var(--p5-white);
+  opacity: 0.3;
+}
+
+.starCore {
+  width: 46px;
+  height: 46px;
+  background: var(--p5-white);
+  opacity: 0.85;
+  animation: starPulse 3s ease-in-out infinite;
+}
+
+@keyframes starPulse {
+  0%, 100% { opacity: 0.85; transform: scale(1);    }
+  50%       { opacity: 1;    transform: scale(1.07); }
+}
+
+.projectCard:hover .starOuter { background: var(--p5-red); }
+.projectCard:hover .starCore  { background: var(--p5-red); opacity: 1; }
+
+/* ── Technology label base ── */
+.techLabel {
+  position: absolute;
+  font-family: 'Bebas Neue', 'Black Han Sans', Impact, sans-serif;
+  font-size: 0.68rem;
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--p5-white);
+  background: var(--p5-black);
+  border: 1.5px solid var(--p5-white);
+  padding: 1px 5px;
+  white-space: nowrap;
+  line-height: 1.2;
+  z-index: 4;
+  transition: background 0.2s, color 0.2s;
+}
+
+.projectCard:hover .techLabel {
+  background: var(--p5-red);
+  border-color: var(--p5-red);
+}
+
+/* ── Positions (clock-wise from top) ── */
+/* top       */ .techPos_top          { top:  -1.4rem; left: 50%; transform: translateX(-50%) rotate(-3deg); }
+/* right      */ .techPos_right        { top: 40%;      right: -3.2rem; transform: translateY(-50%) rotate(4deg); }
+/* bottom-right */ .techPos_bottom_right { bottom: -1.2rem; right: 2px;  transform: rotate(-2deg); }
+/* bottom-left  */ .techPos_bottom_left  { bottom: -1.2rem; left: 2px;   transform: rotate(3deg); }
+/* left       */ .techPos_left         { top: 40%;      left: -3.2rem; transform: translateY(-50%) rotate(-5deg); }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVO
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .projectCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .logoWrapper {
+    margin-right: 0;
+    margin-bottom: -12px;
+    width: 100px;
+    height: 115px;
+  }
+
+  .dialogBalloon {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 2.4rem 1rem 1.4rem 1.2rem;
+    min-height: 180px;
+  }
+
+  .descriptionText {
+    max-width: 100%;
+  }
+
+  .techStarWrapper {
+    align-self: flex-end;
+    width: 100px;
+    height: 100px;
+  }
+
+  .starOuter  { width: 96px;  height: 96px; }
+  .starMid    { width: 78px;  height: 78px; }
+  .starInner  { width: 58px;  height: 58px; }
+  .starCore   { width: 36px;  height: 36px; }
+
+  .techLabel  { font-size: 0.58rem; padding: 1px 3px; }
+
+  .techPos_right       { right: -3rem; }
+  .techPos_left        { left:  -3rem; }
+}
+
+@media (max-width: 480px) {
+  .projectsSection {
+    padding: 2rem 0.8rem 4rem;
+  }
+
+  .titleText { font-size: 0.95rem; }
+
+  .descriptionText { font-size: 0.85rem; }
+}

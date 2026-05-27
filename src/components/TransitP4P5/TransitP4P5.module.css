@@ -1,0 +1,170 @@
+/* ── Contenedor principal ── */
+.transit {
+  position:    relative;
+  width:       100%;
+  height:      32vh;
+  overflow:    hidden;
+  isolation:   isolate;
+  background:  transparent;
+  margin-top:  -120px;     
+  padding-top: 120px;      
+}
+
+
+
+/* ── Slash negro 1 ── */
+.slashBlack1 {
+  position:   absolute;
+  inset:      0;
+  z-index:    2;
+  background: #111111;
+  clip-path:  polygon(0 55%, 100% 30%, 100% 100%, 0 100%);
+}
+
+/* ── Slash blanco ── */
+.slashWhite1 {
+  position:   absolute;
+  inset:      0;
+  z-index:    3;
+  background: #ffffff;
+  clip-path:  polygon(0 65%, 100% 42%, 100% 100%, 0 100%);
+}
+
+/* ── Slash negro 2 ── */
+.slashBlack2 {
+  position:   absolute;
+  inset:      0;
+  z-index:    4;
+  background: #111111;
+  clip-path:  polygon(0 78%, 100% 58%, 100% 100%, 0 100%);
+}
+
+/* ── Banda roja P5 ── */
+.redBand {
+  position:   absolute;
+  bottom:     0;
+  left:       0;
+  right:      0;
+  height:     18%;
+  z-index:    5;
+  background: #dc0000;
+  clip-path:  polygon(0 30%, 100% 0%, 100% 100%, 0 100%);
+}
+
+/* ── Partículas cuadradas rojas ── */
+.particles {
+  position:       absolute;
+  inset:          0;
+  z-index:        6;
+  pointer-events: none;
+}
+
+.particle {
+  position:         absolute;
+  background:       #dc0000;
+  border-radius:    0;
+  opacity:          0;
+  animation:        particleDrift 4s ease-in-out infinite;
+}
+
+/* Variantes blancas para contraste */
+.p3, .p7, .p10 {
+  background: #ffffff;
+}
+
+/* Posiciones y tamaños — concentradas en mitad inferior */
+.p1  { width: 8px;  height: 8px;  bottom: 28%; left:  6%;  animation-delay: 0s;    animation-duration: 3.8s; }
+.p2  { width: 5px;  height: 5px;  bottom: 22%; left: 14%;  animation-delay: -0.8s; animation-duration: 4.2s; }
+.p3  { width: 10px; height: 10px; bottom: 35%; left: 24%;  animation-delay: -1.5s; animation-duration: 3.5s; }
+.p4  { width: 6px;  height: 6px;  bottom: 18%; left: 38%;  animation-delay: -2.1s; animation-duration: 5.0s; }
+.p5  { width: 8px;  height: 8px;  bottom: 40%; left: 52%;  animation-delay: -0.4s; animation-duration: 4.5s; }
+.p6  { width: 4px;  height: 4px;  bottom: 25%; left: 63%;  animation-delay: -1.9s; animation-duration: 3.2s; }
+.p7  { width: 9px;  height: 9px;  bottom: 32%; left: 74%;  animation-delay: -0.6s; animation-duration: 4.8s; }
+.p8  { width: 5px;  height: 5px;  bottom: 20%; left: 82%;  animation-delay: -2.5s; animation-duration: 3.9s; }
+.p9  { width: 7px;  height: 7px;  bottom: 38%; left: 91%;  animation-delay: -1.2s; animation-duration: 4.1s; }
+.p10 { width: 11px; height: 11px; bottom: 15%; left: 46%;  animation-delay: -3.0s; animation-duration: 5.2s; }
+
+@keyframes particleDrift {
+  0%   { opacity: 0;    transform: translateY(0)     rotate(0deg);   }
+  20%  { opacity: 0.85; transform: translateY(-8px)  rotate(45deg);  }
+  50%  { opacity: 0.65; transform: translateY(-18px) rotate(90deg);  }
+  80%  { opacity: 0.4;  transform: translateY(-28px) rotate(135deg); }
+  100% { opacity: 0;    transform: translateY(-38px) rotate(180deg); }
+}
+
+/* ── Formas flotantes P5 ── */
+.shapes {
+  position:       absolute;
+  inset:          0;
+  z-index:        7;
+  pointer-events: none;
+}
+
+.shape {
+  position:  absolute;
+  background: #dc0000;
+  clip-path:  polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  opacity:    0.55;
+  animation:  shapeFloat 6s ease-in-out infinite;
+}
+
+.sh3, .sh5 {
+  clip-path: polygon(
+    50% 0%, 63% 37%, 100% 50%, 63% 63%,
+    50% 100%, 37% 63%, 0% 50%, 37% 37%
+  );
+  background: #ffffff;
+}
+
+.sh1 { width: 18px; height: 18px; top: 12%; left:  8%;  animation-delay: 0s;    animation-duration: 5s;   }
+.sh2 { width: 12px; height: 12px; top: 30%; left: 18%;  animation-delay: -1.5s; animation-duration: 7s;   }
+.sh3 { width: 22px; height: 22px; top:  8%; left: 72%;  animation-delay: -0.8s; animation-duration: 6s;   }
+.sh4 { width: 14px; height: 14px; top: 45%; left: 85%;  animation-delay: -2.2s; animation-duration: 8s;   }
+.sh5 { width: 16px; height: 16px; top: 20%; left: 52%;  animation-delay: -3.1s; animation-duration: 5.5s; }
+.sh6 { width: 10px; height: 10px; top: 55%; left: 35%;  animation-delay: -1.0s; animation-duration: 9s;   }
+
+@keyframes shapeFloat {
+  0%,  100% { transform: translateY(0)     rotate(0deg);   opacity: 0.55; }
+  50%        { transform: translateY(-14px) rotate(180deg); opacity: 0.85; }
+}
+
+/* ── Bloque de texto collage ── */
+.callCard {
+  position:       absolute;
+  top:            28%;
+  left:           50%;
+  transform:      translateX(-50%);
+  z-index:        10;
+  display:        flex;
+  align-items:    center;
+  gap:            4px;
+  pointer-events: none;
+}
+
+.letter {
+  display:     inline-block;
+  font-family: 'Arial Black', 'Arial', sans-serif;
+  font-size:   clamp(22px, 4vw, 44px);
+  font-weight: 900;
+  line-height: 1;
+  transform:   rotate(var(--angle));
+  background:  #111111;
+  color:       #ffffff;
+  padding:     2px 6px 4px;
+  margin:      0 1px;
+}
+
+.letter:nth-child(odd)  { background: #111111; color: #ffffff; }
+.letter:nth-child(even) { background: #ffffff; color: #111111; }
+
+.letter:nth-child(3),
+.letter:nth-child(7),
+.letter:nth-child(11) {
+  background: #dc0000;
+  color:      #ffffff;
+}
+
+.space {
+  display: inline-block;
+  width:   clamp(8px, 1.5vw, 16px);
+}

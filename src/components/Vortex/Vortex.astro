@@ -1,0 +1,24 @@
+---
+import styles from './Vortex.module.css';
+
+const rings = Array.from({ length: 22 });
+---
+
+<div class={styles.vortex}>
+  <div class={styles.scene}>
+    {rings.map((_, i) => (
+      <div
+        class={styles.ring}
+        style={`--i: ${i};`}
+      ></div>
+    ))}
+    <div class={styles.core}></div>
+  </div>
+
+  <div class={styles.chromaR}></div>
+  <div class={styles.chromaC}></div>
+  <div class={styles.scanlines}></div>
+  <div class={styles.noise}></div>
+  <div class={styles.hline}></div>
+  <div class={styles.glitch}></div>
+</div>

@@ -1,0 +1,100 @@
+---
+import styles from './Projects.module.css';
+
+interface Project {
+  id: string | number;
+  title: string;
+  description: string;
+  logo: string;
+  technologies: string[];
+  link: string;
+}
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+
+// Map up to 5 technologies to fixed star positions
+const STAR_POSITIONS = ['top', 'right', 'bottom-right', 'bottom-left', 'left'] as const;
+---
+
+<section class={styles.projectsSection}>
+  <ul class={styles.projectsList}>
+    {projects.map((project) => {
+      const techs = project.technologies.slice(0, 5);
+      return (
+        <li class={styles.projectCard} key={project.id}>
+
+          {/* ── LEFT: Logo polygon + hover hexagram ── */}
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            class={styles.logoWrapper}
+            aria-label={`Ver ${project.title}`}
+          >
+            <div class={styles.logoPolygon}>
+              <img
+                src={project.logo}
+                alt={`Logo de ${project.title}`}
+                class={styles.logoImg}
+                loading="lazy"
+              />
+            </div>
+            {/* Second inverted triangle that appears on hover to form hexagram */}
+            <div class={styles.logoPolygonInverted} aria-hidden="true" />
+            <span class={styles.logoLinkLabel}>Link</span>
+          </a>
+
+          {/* ── CENTER/RIGHT: Dialog balloon ── */}
+          <div class={styles.dialogBalloon}>
+
+            {/* Jagged connector "teeth" on the left edge */}
+            <div class={styles.zigzagLeft} aria-hidden="true">
+              <svg viewBox="0 0 32 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <polyline
+                  points="32,0 0,10 32,20 0,34 32,48 0,60 32,74 0,88 32,100 0,110 32,120"
+                  fill="none"
+                  stroke="#ffffff"
+                  stroke-width="3"
+                  stroke-linejoin="miter"
+                />
+              </svg>
+            </div>
+
+            {/* Project title — floating rotated box */}
+            <div class={styles.titleBox}>
+              <span class={styles.titleText}>{project.title}</span>
+            </div>
+
+            {/* Description text */}
+            <p class={styles.descriptionText}>{project.description}</p>
+
+            {/* ── RIGHT: 5-point tech star ── */}
+            <div class={styles.techStarWrapper} aria-label="Tecnologías">
+              {/* Concentric star layers (CSS-only) */}
+              <div class={styles.starOuter} aria-hidden="true" />
+              <div class={styles.starMid}   aria-hidden="true" />
+              <div class={styles.starInner} aria-hidden="true" />
+              <div class={styles.starCore}  aria-hidden="true" />
+
+              {/* Technology labels around vertices */}
+              {techs.map((tech, i) => (
+                <span
+                  class={`${styles.techLabel} ${styles[`techPos${STAR_POSITIONS[i].replace('-', '_')}`]}`}
+                  key={tech}
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+          </div>{/* /dialogBalloon */}
+
+        </li>
+      );
+    })}
+  </ul>
+</section>
