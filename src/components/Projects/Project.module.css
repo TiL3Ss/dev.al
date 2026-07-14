@@ -1,0 +1,922 @@
+/* ═══════════════════════════════════════════════════════
+   PROJECTS  ·  Persona 5 Royal  ·  CH·05
+   Paleta: #111111  #ffffff  #dc0000  #f5c400
+═══════════════════════════════════════════════════════ */
+
+.projects {
+  --r:  #dc0000;
+  --b:  #111111;
+  --w:  #ffffff;
+  --y:  #f5c400;
+  --gap: clamp(40px, 6vw, 80px);
+
+  position:   relative;
+  width:      100%;
+  min-height: 100vh;
+  overflow:   hidden;
+  background: var(--b);
+  isolation:  isolate;
+  padding-bottom: 100px;
+}
+
+/* ════════════════════════════════════════
+   FONDO — Ciudad Persona 5 Royal
+   SVG ciudad vista en picado, estilo comic:
+   bordes negros anchos, escala de grises,
+   ventanas blancas, destellos rojo en antenas.
+════════════════════════════════════════ */
+.bg {
+  position: absolute;
+  inset:    0;
+  z-index:  0;
+  pointer-events: none;
+}
+
+/* Contenedor del SVG ciudad — ocupa todo el fondo */
+.cityBg {
+  position: absolute;
+  inset:    0;
+  overflow: hidden;
+}
+
+/* El SVG de ciudad se inserta desde JS/astro como elemento hijo */
+.cityBg svg {
+  width:  100%;
+  height: 100%;
+  display: block;
+}
+
+/* Overlay oscuro encima de la ciudad para que el contenido sea legible */
+.cityOverlay {
+  position:   absolute;
+  inset:      0;
+  background: linear-gradient(
+    180deg,
+    rgba(5,5,8,0.72) 0%,
+    rgba(5,5,8,0.55) 40%,
+    rgba(5,5,8,0.65) 100%
+  );
+}
+
+/* Viñeta radial — más oscuro en bordes, más claro al centro */
+.cityVignette {
+  position:   absolute;
+  inset:      0;
+  background: radial-gradient(
+    ellipse 80% 65% at 50% 48%,
+    rgba(220,0,0,0.05) 0%,
+    transparent 55%,
+    rgba(0,0,0,0.5) 100%
+  );
+  animation: cityPulse 6s ease-in-out infinite;
+}
+
+@keyframes cityPulse {
+  0%,100% { opacity: 0.6; }
+  50%      { opacity: 1.0; }
+}
+
+/* líneas de velocidad diagonales — efecto manga */
+.speedLines {
+  position: absolute;
+  inset:    0;
+  background-image: repeating-linear-gradient(
+    -65deg,
+    transparent 0px,
+    transparent 18px,
+    rgba(220,0,0,0.04) 18px,
+    rgba(220,0,0,0.04) 19px
+  );
+}
+
+/* trama halftone — puntitos manga */
+.halftone {
+  position: absolute;
+  inset:    0;
+  background-image: radial-gradient(circle, rgba(220,0,0,0.06) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0;
+}
+
+/* slashes decorativos de fondo */
+.bgSlash1 {
+  position:   absolute;
+  top:        10%;
+  left:       -10%;
+  width:      55%;
+  height:     3px;
+  background: rgba(220,0,0,0.12);
+  transform:  rotate(-8deg);
+}
+.bgSlash2 {
+  position:   absolute;
+  top:        35%;
+  right:      -5%;
+  width:      40%;
+  height:     2px;
+  background: rgba(255,255,255,0.05);
+  transform:  rotate(-8deg);
+}
+.bgSlash3 {
+  position:   absolute;
+  bottom:     20%;
+  left:       5%;
+  width:      30%;
+  height:     2px;
+  background: rgba(220,0,0,0.08);
+  transform:  rotate(-8deg);
+}
+
+/* partículas cuadradas flotantes */
+.bgParticle {
+  position:   absolute;
+  width:      calc(4px + var(--pi) * 1px);
+  height:     calc(4px + var(--pi) * 1px);
+  background: var(--r);
+  opacity:    0;
+  top:        calc(8% + var(--pi) * 6%);
+  left:       calc(var(--pi) * 7%);
+  animation:  particleDrift calc(3.5s + var(--pi) * 0.25s) ease-in-out infinite;
+  animation-delay: calc(var(--pi) * -0.4s);
+}
+.bgParticle:nth-child(odd)  { background: var(--w); }
+.bgParticle:nth-child(3n)   { clip-path: polygon(50% 0%,100% 50%,50% 100%,0% 50%); }
+
+@keyframes particleDrift {
+  0%   { opacity: 0;    transform: translateY(0)     rotate(0deg);   }
+  20%  { opacity: 0.6;                                               }
+  80%  { opacity: 0.3;  transform: translateY(-32px) rotate(180deg);}
+  100% { opacity: 0;    transform: translateY(-44px) rotate(220deg);}
+}
+
+/* ════════════════════════════════════════
+   HEADER — mismo lenguaje que separador
+════════════════════════════════════════ */
+.header {
+  position:   relative;
+  z-index:    10;
+  height:     clamp(100px, 14vw, 150px);
+  overflow:   visible; /* permite que las letras se fusionen con el separador */
+  margin-bottom: var(--gap);
+  margin-top:  -5%;   /* sube para fusionarse con el separador de componentes */
+}
+
+.headerSlash {
+  position:   absolute;
+  inset:      0;
+  background: var(--b);
+  clip-path:  polygon(0 0, 100% 0, 100% 52%, 0 78%);
+}
+.headerSlashWhite {
+  position:   absolute;
+  inset:      0;
+  z-index:    1;
+  background: var(--w);
+  clip-path:  polygon(0 0, 100% 0, 100% 60%, 0 88%);
+}
+.headerRed {
+  position:   absolute;
+  inset:      0;
+  z-index:    2;
+  background: var(--r);
+  clip-path:  polygon(0 0, 100% 0, 100% 68%, 0 98%);
+}
+
+.headerShapes {
+  position: absolute;
+  inset:    0;
+  z-index:  4;
+  pointer-events: none;
+}
+.hShape {
+  position:   absolute;
+  background: var(--b);
+  clip-path:  polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+  opacity:    0.5;
+  animation:  shapeFloat 5s ease-in-out infinite;
+}
+.hs1 { width:14px; height:14px; top:10%; left: 4%; animation-delay:0s;    }
+.hs2 { width:10px; height:10px; top:40%; left:88%; animation-delay:-1.5s; background:var(--w); opacity:0.7; }
+.hs3 { width:18px; height:18px; top:12%; left:76%; animation-delay:-0.8s; }
+.hs4 { width: 8px; height: 8px; top:55%; left:44%; animation-delay:-2.2s; background:var(--w); opacity:0.5; }
+.hs5 { width:12px; height:12px; top:25%; left:60%; animation-delay:-3.0s; }
+@keyframes shapeFloat {
+  0%,100% { transform:translateY(0) rotate(0deg);    opacity:0.55; }
+  50%      { transform:translateY(-10px) rotate(180deg); opacity:0.9; }
+}
+
+/* ── Título PROJECTS — letras mejoradas con fondo rojo más visible ── */
+.titleCollage {
+  position:  absolute;
+  z-index:   5;
+  top:       calc(53% + 16px);
+  left:      50%;
+  transform: translateX(-50%);
+  display:   flex;
+  align-items: center;
+  gap:       2px;
+  white-space: nowrap;
+  /* Sombra de todo el bloque para destacar */
+  filter: drop-shadow(3px 4px 0px rgba(0,0,0,0.9));
+}
+.titleLetter {
+  display:     inline-block;
+  font-family: 'Arial Black','Arial',sans-serif;
+  font-size:   clamp(26px, 5vw, 56px);
+  font-weight: 900;
+  font-style:  italic;
+  line-height: 1;
+  transform:   rotate(var(--angle));
+  padding:     4px 10px 6px;
+  margin:      0 1px;
+  /* borde interior oscuro */
+  box-shadow:  inset 0 -3px 0 rgba(0,0,0,0.3);
+  letter-spacing: 1px;
+  /* borde blanco de sticker */
+  -webkit-text-stroke: 0px transparent;
+  position:    relative;
+}
+/* letras impares: negro sobre blanco */
+.titleLetter:nth-child(odd) {
+  background:  var(--b);
+  color:       var(--w);
+  border:      2px solid var(--w);
+}
+/* letras pares: blanco sobre negro */
+.titleLetter:nth-child(even) {
+  background:  var(--w);
+  color:       var(--b);
+  border:      2px solid var(--b);
+}
+/* letras rojas (posiciones 3 y 6 = índices 2 y 5) — más visibles */
+.titleLetter:nth-child(3),
+.titleLetter:nth-child(6) {
+  background:  var(--r);
+  color:       var(--w);
+  border:      3px solid var(--w);
+  /* sombra fuerte para destacar */
+  box-shadow:
+    inset 0 -4px 0 rgba(0,0,0,0.4),
+    0 0 0 2px var(--b),
+    3px 3px 0 var(--b);
+  font-size:   clamp(28px, 5.5vw, 60px);
+  transform:   rotate(var(--angle)) scale(1.08);
+  z-index:     1;
+  text-shadow: 1px 1px 0 var(--b), -1px -1px 0 rgba(0,0,0,0.5);
+}
+
+/* ════════════════════════════════════════
+   LISTA DE CARDS
+════════════════════════════════════════ */
+.list {
+  position:       relative;
+  z-index:        10;
+  display:        flex;
+  flex-direction: column;
+  gap:            clamp(48px, 7vw, 90px);
+  padding:        0 clamp(16px, 5vw, 72px);
+  max-width:      1140px;
+  margin:         0 auto;
+}
+
+/* ════════════════════════════════════════
+   CARD — article
+════════════════════════════════════════ */
+.card {
+  display:     grid;
+  grid-template-columns: clamp(160px, 22vw, 240px) 1fr;
+  grid-template-rows:    auto;
+  gap:         clamp(20px, 3vw, 40px);
+  align-items: start;
+  position:    relative;
+  opacity:     0;
+  animation:   cardIn 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+  animation-delay: calc(var(--idx) * 0.18s + 0.2s);
+}
+
+/* alterna dirección */
+.card[style*="--alt: 1"] {
+  grid-template-columns: 1fr clamp(160px, 22vw, 240px);
+}
+.card[style*="--alt: 1"] .starSide  { order: 2; }
+.card[style*="--alt: 1"] .dialogSide { order: 1; }
+
+@keyframes cardIn {
+  from { opacity:0; transform:translateY(28px) skewX(-2deg); }
+  to   { opacity:1; transform:translateY(0)    skewX(0deg);  }
+}
+
+/* número de proyecto — badge lateral */
+.cardIndex {
+  position:   absolute;
+  top:        -18px;
+  left:       0;
+  display:    flex;
+  align-items: center;
+  gap:        8px;
+  z-index:    2;
+}
+.card[style*="--alt: 1"] .cardIndex { left: auto; right: 0; flex-direction: row-reverse; }
+
+.cardIndexNum {
+  font-family: 'Arial Black','Arial',sans-serif;
+  font-size:   clamp(32px, 4vw, 52px);
+  font-weight: 900;
+  color:       var(--r);
+  line-height: 1;
+  -webkit-text-stroke: 3px var(--b);
+  paint-order: stroke fill;
+  filter: drop-shadow(2px 2px 0 var(--b));
+  opacity: 0.18;
+}
+.cardIndexLine {
+  display:    block;
+  height:     2px;
+  width:      clamp(24px, 4vw, 48px);
+  background: var(--r);
+  transform:  skewX(-15deg);
+  opacity:    0.4;
+}
+
+/* ════════════════════════════════════════
+   STAT STAR SIDE
+════════════════════════════════════════ */
+.starSide {
+  position:   relative;
+  display:    flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.starRingOuter,
+.starRingInner {
+  position:      absolute;
+  border-radius: 50%;
+  border:        1px solid rgba(220,0,0,0.2);
+  animation:     ringPulse 4s ease-in-out infinite;
+}
+.starRingOuter { inset: -8%; animation-delay: 0s; }
+.starRingInner { inset: 12%; border-color: rgba(220,0,0,0.12); animation-delay: -2s; }
+
+@keyframes ringPulse {
+  0%,100% { opacity:0.4; transform:scale(1);    }
+  50%      { opacity:0.9; transform:scale(1.04); }
+}
+
+.statStar {
+  width:    100%;
+  height:   100%;
+  overflow: visible;
+}
+
+/* ════════════════════════════════════════
+   STAR POINTS — animación de estiramiento
+   Cada punta se estira desde su base (centro
+   de la estrella) hacia su tip, SIN separarse
+   del centro. Se usa transform-box + scaleY
+   con transform-origin en la base de la punta.
+   Delays y duraciones distintos → efecto aleatorio.
+   Hover → pulso rápido escalonado (animación original).
+════════════════════════════════════════ */
+.starPoint {
+  fill:             rgba(220,0,0,0.15);
+  stroke:           rgba(220,0,0,0.55);
+  stroke-width:     1.5;
+  /* transform-box fill-box + origin en la base de la punta (90px,90px = centro del SVG) */
+  transform-box:    fill-box;
+  transform-origin: center bottom; /* base de cada punta apunta al centro */
+  transition:       fill 0.2s, filter 0.2s;
+}
+
+/* Cada punta: duración y delay distintos → asincrónico / pseudo-aleatorio */
+.starPoint1 { animation: tipStretch 3.2s ease-in-out infinite 0.00s; }
+.starPoint2 { animation: tipStretch 2.7s ease-in-out infinite 0.85s; }
+.starPoint3 { animation: tipStretch 3.5s ease-in-out infinite 0.40s; }
+.starPoint4 { animation: tipStretch 2.9s ease-in-out infinite 1.45s; }
+.starPoint5 { animation: tipStretch 3.1s ease-in-out infinite 0.65s; }
+
+/* Estiramiento: scaleY estira la punta hacia afuera sin mover la base */
+@keyframes tipStretch {
+  0%,100% {
+    transform: scaleY(1);
+    fill:      rgba(220,0,0,0.13);
+    filter:    none;
+  }
+  40% {
+    transform: scaleY(1.32);
+    fill:      rgba(220,0,0,0.52);
+    filter:    drop-shadow(0 0 5px rgba(220,0,0,0.7));
+  }
+  60% {
+    transform: scaleY(0.88);
+    fill:      rgba(220,0,0,0.08);
+    filter:    none;
+  }
+}
+
+/* HOVER: pulso rápido escalonado — brilla punta a punta */
+.statStar:hover .starPoint1 { animation: tipPulse 0.5s ease-in-out infinite 0.00s !important; }
+.statStar:hover .starPoint2 { animation: tipPulse 0.5s ease-in-out infinite 0.10s !important; }
+.statStar:hover .starPoint3 { animation: tipPulse 0.5s ease-in-out infinite 0.20s !important; }
+.statStar:hover .starPoint4 { animation: tipPulse 0.5s ease-in-out infinite 0.05s !important; }
+.statStar:hover .starPoint5 { animation: tipPulse 0.5s ease-in-out infinite 0.15s !important; }
+
+@keyframes tipPulse {
+  0%,100% { fill: rgba(220,0,0,0.10); filter: none; }
+  50%      { fill: rgba(220,0,0,0.45); filter: drop-shadow(0 0 6px rgba(220,0,0,0.7)); }
+}
+
+.starLineO { fill:none; stroke:rgba(220,0,0,0.45); stroke-width:1.5; }
+.starLineM { fill:none; stroke:rgba(220,0,0,0.28); stroke-width:1;   }
+.starLineI { fill:none; stroke:rgba(220,0,0,0.45); stroke-width:1.5; }
+.starAxis  { stroke:rgba(220,0,0,0.3); stroke-width:0.8; }
+.starCore  { fill:var(--r); }
+
+.starLabel {
+  fill:        var(--w);
+  font-family: 'Arial Black','Arial',sans-serif;
+  font-size:   7.5px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-shadow: 0 0 4px #000;
+}
+
+/* ════════════════════════════════════════
+   PENTÁGONO CENTRAL — cubre el centro
+   de la estrella de estadísticas.
+   Dos capas:
+   - .pentaShadow: detrás, color opuesto (rojo), offset pequeño
+   - .pentaFront:  encima, negro con borde blanco
+   El SVG se superpone al statStar (mismo viewBox 0 0 180 180).
+════════════════════════════════════════ */
+.pentaFrame {
+  position:  absolute;
+  width:     100%;
+  height:    100%;
+  top:       0;
+  left:      0;
+  pointer-events: none;
+  animation: logoFloat 5s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%,100% { transform: translateY(0)    rotate(-1deg); }
+  50%      { transform: translateY(-6px) rotate(1deg);  }
+}
+
+.pentaSvg {
+  width:    100%;
+  height:   100%;
+  position: absolute;
+  top:      0; left: 0;
+  overflow: visible;
+}
+
+/* Capa posterior — rojo, z-index bajo */
+.pentaShadow {
+  fill:    var(--r);
+  stroke:  var(--b);
+  stroke-width: 2;
+  /* z-index dentro del SVG: aparece antes en el DOM → queda detrás */
+}
+
+/* Capa frontal — negro con borde blanco, z-index alto */
+.pentaFront {
+  fill:         var(--b);
+  stroke:       var(--w);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  /* animación de respiración P5 sutil */
+  animation: pentaPulse 4s ease-in-out infinite;
+  transform-origin: 90px 90px;
+  transform-box: fill-box;
+}
+
+@keyframes pentaPulse {
+  0%,100% { transform: scale(1);    }
+  50%      { transform: scale(1.04); }
+}
+
+/* Línea interior decorativa */
+.pentaInner {
+  fill:         none;
+  stroke:       rgba(255,255,255,0.18);
+  stroke-width: 1;
+}
+
+/* ── Logo/ícono centrado sobre el pentágono ── */
+.pentaIconSlot {
+  position:        absolute;
+  top:             50%;
+  left:            50%;
+  transform:       translate(-50%, -50%);
+  width:           30%;
+  aspect-ratio:    1;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  z-index:         2;
+}
+
+.logoImg {
+  width:      65%;
+  height:     65%;
+  object-fit: contain;
+  filter:     invert(1) brightness(1.3);
+  position:   relative;
+  z-index:    1;
+}
+
+/* ════════════════════════════════════════
+   DIALOG SIDE
+════════════════════════════════════════ */
+.dialogSide {
+  display:        flex;
+  flex-direction: column;
+  gap:            10px;
+  padding-top:    clamp(8px, 2vw, 20px);
+}
+
+/* ── TÍTULO BTN ── */
+.titleBtn {
+  display:      flex;
+  align-items:  stretch;
+  gap:          0;
+  background:   none;
+  border:       none;
+  cursor:       pointer;
+  padding:      0;
+  width:        fit-content;
+  position:     relative;
+  margin-left: clamp(36px, 4vw, 48px);
+  align-self:  flex-start;
+  animation:    titleBob 3.5s ease-in-out infinite;
+  transform-origin: left center;
+}
+@keyframes titleBob {
+  0%,100% { transform:translateY(0) skewX(0deg);     }
+  50%      { transform:translateY(-3px) skewX(-1deg); }
+}
+
+.titleSticker {
+  display:    block;
+  width:      28px;
+  background: var(--r);
+  clip-path:  polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  position:   relative;
+  flex-shrink: 0;
+}
+.titleSticker::after {
+  content:    '';
+  position:   absolute;
+  inset:      0;
+  background: var(--b);
+  clip-path:  polygon(30% 0%, 100% 50%, 30% 100%);
+}
+
+.titleMain {
+  display:      block;
+  font-family:  'Arial Black','Arial',sans-serif;
+  font-size:    clamp(14px, 2.2vw, 22px);
+  font-weight:  900;
+  color:        var(--w);
+  background:   var(--b);
+  padding:      6px 14px 6px 10px;
+  letter-spacing: 2px;
+  border-top:   3px solid var(--w);
+  border-bottom: 3px solid var(--w);
+  transform:    skewX(-6deg);
+  transition:   background 0.12s, color 0.12s, border-color 0.12s;
+  position:     relative;
+}
+.titleMain::after {
+  content:    '';
+  position:   absolute;
+  top:        4px; bottom:4px; right:6px;
+  width:      2px;
+  background: rgba(255,255,255,0.2);
+}
+
+.titleBtn:hover .titleMain {
+  background:   var(--r);
+  border-color: var(--r);
+}
+.titleBtn:hover .titleSticker { background: var(--w); }
+.titleBtn:hover .titleSticker::after { background: var(--r); }
+
+.titleChevron {
+  display:     flex;
+  align-items: center;
+  font-size:   10px;
+  color:       var(--b);
+  background:  var(--w);
+  padding:     0 10px;
+  transform:   skewX(-6deg);
+  animation:   chevPulse 1s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes chevPulse {
+  0%,100% { transform:skewX(-6deg) translateX(0);   opacity:1; }
+  50%      { transform:skewX(-6deg) translateX(3px); opacity:0.5; }
+}
+
+/* ── DIALOG BOX ── */
+.dialogBox {
+  position: relative;
+  animation: dialogBreath 5s ease-in-out infinite;
+  margin-left: 0px;
+}
+@keyframes dialogBreath {
+  0%,100% { transform:translateY(0);    }
+  50%      { transform:translateY(-5px); }
+}
+
+.dialogShadow {
+  position:   absolute;
+  inset:      0;
+  background: var(--r);
+  clip-path: polygon(
+    36px 0%,
+    calc(100% - 16px) 0%,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 16px) 100%,
+    16px 100%,
+    0% calc(100% - 20px),
+    12px 70%,
+    4px  55%,
+    16px 40%,
+    8px  28%,
+    20px 14%
+  );
+  transform: translate(6px, 6px);
+}
+
+.dialogBody {
+  position:   relative;
+  background: var(--b);
+  border:     3.5px solid var(--w);
+  clip-path: polygon(
+    36px 0%,
+    calc(100% - 16px) 0%,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 16px) 100%,
+    16px 100%,
+    0% calc(100% - 20px),
+    12px 70%,
+    4px  55%,
+    16px 40%,
+    8px  28%,
+    20px 14%
+  );
+  padding: 18px 22px 18px 28px;
+}
+.dialogBody::before {
+  content:    '';
+  position:   absolute;
+  inset:      6px;
+  border:     1px solid rgba(255,255,255,0.12);
+  clip-path: polygon(
+    30px 0%,
+    calc(100% - 12px) 0%,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0% calc(100% - 16px),
+    10px 70%,
+    2px  55%,
+    12px 40%,
+    5px  28%,
+    16px 14%
+  );
+  pointer-events: none;
+}
+
+.speakerTag {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  margin-bottom: 8px;
+}
+.speakerDot {
+  display:       block;
+  width:         8px;
+  height:        8px;
+  background:    var(--r);
+  flex-shrink:   0;
+  clip-path:     polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+  animation:     dotSpin 4s linear infinite;
+}
+@keyframes dotSpin {
+  from { transform:rotate(0);   }
+  to   { transform:rotate(360deg); }
+}
+.speakerName {
+  font-family:   'Arial Black','Arial',sans-serif;
+  font-size:     10px;
+  font-weight:   900;
+  color:         var(--r);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.dialogContent { position:relative; }
+
+.dialogText {
+  font-family: 'Arial','Helvetica',sans-serif;
+  font-size:   clamp(12px, 1.4vw, 15px);
+  line-height: 1.7;
+  color:       var(--w);
+  font-weight: 500;
+  margin:      0;
+}
+
+.dialogCursor {
+  display:    block;
+  font-size:  10px;
+  color:      var(--r);
+  text-align: right;
+  margin-top: 8px;
+  animation:  cursorBlink 1.1s ease-in-out infinite;
+}
+@keyframes cursorBlink {
+  0%,45% { opacity:1; transform:translateY(0);   }
+  55%,100%{ opacity:0; transform:translateY(3px); }
+}
+
+/* ════════════════════════════════════════
+   TECH TAGS — círculo P5 con pinchos radiales
+   Capas (de atrás a adelante en el SVG):
+   1. pinchos (.techTagPins)  — renderizados primero
+   2. sombra  (.techTagShadowCircle) — offset mínimo +2px
+   3. círculo (.techTagCircle) — encima de todo, z mayor
+   4. texto   (.techTagText)  — z-index 3
+════════════════════════════════════════ */
+.techTags {
+  display:     flex;
+  flex-wrap:   wrap;
+  gap:         14px;
+  margin-top:  8px;
+  align-items: center;
+  /* Misma inclinación que el TextBox (.backgroundWhite clip-path) */
+  transform:      skewX(-6deg);
+  transform-origin: left center;
+  /* padding para que los pinchos no queden cortados */
+  padding:        8px 16px 12px 8px;
+  position:       relative;
+}
+
+/* Contenedor inclinado extra: franja de fondo tipo textbox */
+.techTags::before {
+  content:    '';
+  position:   absolute;
+  inset:      0;
+  background: rgba(0,0,0,0.35);
+  clip-path:  polygon(0% 4%, 100% 0%, 97% 100%, 0% 96%);
+  pointer-events: none;
+  z-index:    0;
+}
+
+.techTag {
+  position:     relative;
+  display:      inline-flex;
+  align-items:  center;
+  justify-content: center;
+  width:        64px;
+  height:       64px;
+  cursor:       default;
+  animation:    tagPop calc(0.4s + var(--ti, 0) * 0.08s) cubic-bezier(0.22,1,0.36,1) both;
+  animation-delay: calc(var(--ti, 0) * 0.07s + 0.3s);
+  transition:   transform 0.15s;
+  /* Contra-skew para que los círculos no queden oblicuos */
+  transform:    skewX(6deg);
+  z-index:      1;
+}
+.techTag:hover {
+  transform: skewX(6deg) scale(1.18) rotate(-4deg);
+  z-index:   2;
+}
+
+@keyframes tagPop {
+  from { opacity: 0; transform: scale(0.2) rotate(-15deg); }
+  to   { opacity: 1; transform: scale(1)   rotate(0deg); }
+}
+
+/* SVG contenedor — overflow visible para pinchos */
+.techTagBg {
+  position: absolute;
+  inset:    0;
+  width:    100%;
+  height:   100%;
+  overflow: visible;
+}
+
+/* Pinchos — se renderizan antes que el círculo en el DOM = detrás */
+.techTagPin {
+  transform-box:    fill-box;
+  transform-origin: center bottom;
+}
+.techTagPin1 { animation: pinStretch 3.1s ease-in-out infinite 0.00s; }
+.techTagPin2 { animation: pinStretch 2.8s ease-in-out infinite 0.72s; }
+.techTagPin3 { animation: pinStretch 3.4s ease-in-out infinite 0.38s; }
+.techTagPin4 { animation: pinStretch 2.6s ease-in-out infinite 1.10s; }
+.techTagPin5 { animation: pinStretch 3.2s ease-in-out infinite 0.55s; }
+
+@keyframes pinStretch {
+  0%,100% { transform: scaleY(1);    opacity: 0.9; }
+  40%      { transform: scaleY(1.6);  opacity: 1;   }
+  60%      { transform: scaleY(0.72); opacity: 0.7; }
+}
+
+.techTag:nth-child(odd)  .techTagPin { fill: var(--w); }
+.techTag:nth-child(even) .techTagPin { fill: var(--w); }
+.techTag:nth-child(3n)   .techTagPin { fill: var(--y); }
+
+/* Círculo sombra — offset mínimo +2px, detrás del principal */
+.techTagShadowCircle {
+  fill: var(--r);
+}
+.techTag:nth-child(even) .techTagShadowCircle { fill: var(--b); stroke: var(--w); stroke-width: 2; }
+.techTag:nth-child(3n)   .techTagShadowCircle { fill: var(--r); }
+
+/* Círculo principal — encima (renderizado último en el SVG) */
+.techTagCircle {
+  fill:         var(--b);
+  stroke:       var(--w);
+  stroke-width: 3;
+  animation:    tagCirclePulse 3s ease-in-out infinite;
+  transform-origin: 32px 32px;
+  transform-box: fill-box;
+}
+@keyframes tagCirclePulse {
+  0%,100% { transform: scale(1);    }
+  50%      { transform: scale(1.04); }
+}
+.techTag:nth-child(even) .techTagCircle { fill: var(--r);  stroke: var(--w); }
+.techTag:nth-child(3n)   .techTagCircle { fill: var(--b);  stroke: var(--y); }
+
+/* Texto — encima de todo */
+.techTagText {
+  position:       relative;
+  z-index:        3;
+  font-family:    'Arial Black','Arial',sans-serif;
+  font-size:      8px;
+  font-weight:    900;
+  color:          var(--w);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-align:     center;
+  padding:        0 4px;
+  text-shadow:    1px 1px 0 rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8);
+  max-width:      52px;
+  line-height:    1.1;
+  word-break:     break-word;
+  white-space:    normal;
+  transform:      skewX(-4deg);
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════════
+   BOTTOM BAND
+════════════════════════════════════════ */
+.bottomBand {
+  position:   absolute;
+  bottom:     0;
+  left:       0;
+  right:      0;
+  height:     12%;
+  z-index:    5;
+  background: var(--r);
+  clip-path:  polygon(0 35%, 100% 0%, 100% 100%, 0 100%);
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .card,
+  .card[style*="--alt: 1"] {
+    grid-template-columns: 1fr;
+  }
+  .card[style*="--alt: 1"] .starSide  { order: 1; }
+  .card[style*="--alt: 1"] .dialogSide { order: 2; }
+
+  .starSide {
+    width:  min(200px, 55vw);
+    margin: 0 auto;
+  }
+  .dialogShadow,
+  .dialogBody,
+  .dialogBody::before {
+    clip-path: polygon(
+      20px 0%, calc(100% - 10px) 0%, 100% 10px,
+      100% calc(100% - 10px), calc(100% - 10px) 100%,
+      10px 100%, 0% calc(100% - 14px),
+      8px 68%, 2px 54%, 8px 40%, 4px 28%, 12px 14%
+    );
+  }
+  .header { margin-top: -3%; }
+}
