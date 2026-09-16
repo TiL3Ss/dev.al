@@ -1,7 +1,6 @@
 /* ── Contenedor principal ── */
 .transit {
   position:    relative;
-  z-index:     1;
   width:       100%;
   height:      32vh;
   overflow:    hidden;
@@ -36,23 +35,18 @@
   position:   absolute;
   inset:      0;
   z-index:    4;
-  background: #dc0000;
+  background: #111111;
   clip-path:  polygon(0 78%, 100% 58%, 100% 100%, 0 100%);
 }
 
-/* ── Banda roja P5 — se queda roja (se camufla con el inicio de
-   Project) pero más baja/chica, para no invadir la zona donde
-   aterriza el título (que sube con margin-top negativo). ── */
+/* ── Banda roja P5 ── */
 .redBand {
   position:   absolute;
   bottom:     0;
   left:       0;
   right:      0;
-  height:     11%;
-  /* z-index bajo a propósito: el título de Projects (margin-top
-     negativo, sube a fusionarse acá) tiene que quedar siempre encima,
-     nunca tapado por esta banda. */
-  z-index:    0;
+  height:     18%;
+  z-index:    5;
   background: #dc0000;
   clip-path:  polygon(0 30%, 100% 0%, 100% 100%, 0 100%);
 }
