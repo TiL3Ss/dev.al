@@ -1,0 +1,474 @@
+/* ═══════════════════════════════════════════════════════
+   CONTACTS  ·  Mementos  ·  Persona 5 Royal
+   Paleta: #111111  #ffffff  #dc0000  #f5c400
+═══════════════════════════════════════════════════════ */
+
+.contacts {
+  --r: #dc0000;
+  --b: #111111;
+  --w: #ffffff;
+  --y: #f5c400;
+
+  position:   relative;
+  z-index:    2;
+  width:      100%;
+  min-height: 100vh;
+  overflow:   hidden;
+  background: var(--b);
+  isolation:  isolate;
+  padding-bottom: 100px;
+}
+
+/* ════════════════════════════════════════
+   FONDO — por ahora, simplificado: solo un
+   rojo que se va haciendo más opaco/sólido
+   hacia el centro (el vértice, abajo), con
+   viñeta, scanlines y glitch bits encima.
+   El dibujo de la torre/ciudad se retoma
+   después.
+════════════════════════════════════════ */
+.bg {
+  position: absolute;
+  inset:    0;
+  z-index:  0;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 85% at 50% 88%,
+    #b30000 0%,
+    #7a0000 32%,
+    #380000 60%,
+    #0d0202 85%,
+    #000000 100%
+  );
+}
+
+.vignette {
+  position:   absolute;
+  inset:      0;
+  background: radial-gradient(ellipse 75% 65% at 50% 45%, transparent 40%, rgba(0,0,0,0.82) 100%);
+}
+
+.scanlines {
+  position: absolute;
+  inset:    0;
+  background: repeating-linear-gradient(
+    to bottom, transparent 0px, transparent 3px,
+    rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px
+  );
+}
+
+/* ════════════════════════════════════════
+   HEADER — mismo lenguaje que Projects,
+   recolor coherente con Mementos.
+════════════════════════════════════════ */
+.header {
+  position:   relative;
+  z-index:    20;
+  height:     clamp(100px, 14vw, 150px);
+  overflow:   visible;
+  margin-top:    -50px; /* antes no tenía — quedaba mucho espacio contra el separador de arriba */
+  margin-bottom: clamp(30px, 5vw, 60px);
+}
+
+.headerSlash {
+  position:   absolute;
+  inset:      0;
+  background: var(--b);
+  clip-path:  polygon(0 0, 100% 0, 100% 52%, 0 78%);
+}
+.headerSlashWhite {
+  position:   absolute;
+  inset:      0;
+  z-index:    1;
+  background: var(--w);
+  clip-path:  polygon(0 0, 100% 0, 100% 60%, 0 88%);
+}
+.headerRed {
+  position:   absolute;
+  inset:      0;
+  z-index:    2;
+  background: var(--r);
+  clip-path:  polygon(0 0, 100% 0, 100% 68%, 0 98%);
+}
+
+.titleCollage {
+  position:  absolute;
+  z-index:   21;
+  top:       calc(53% + 16px);
+  left:      50%;
+  transform: translateX(-50%);
+  display:   flex;
+  align-items: center;
+  gap:       2px;
+  white-space: nowrap;
+  filter: drop-shadow(3px 4px 0px rgba(0,0,0,0.9));
+}
+.titleLetter {
+  display:     inline-block;
+  font-family: 'Arial Black','Arial',sans-serif;
+  font-size:   clamp(24px, 4.6vw, 52px);
+  font-weight: 900;
+  font-style:  italic;
+  line-height: 1;
+  transform:   rotate(var(--angle));
+  padding:     4px 10px 6px;
+  margin:      0 1px;
+  box-shadow:  inset 0 -3px 0 rgba(0,0,0,0.3);
+  letter-spacing: 1px;
+  position:    relative;
+}
+.titleLetter:nth-child(odd) {
+  background: var(--b);
+  color:      var(--w);
+  border:     2px solid var(--w);
+}
+.titleLetter:nth-child(even) {
+  background: var(--w);
+  color:      var(--b);
+  border:     2px solid var(--b);
+}
+.titleLetter:nth-child(3),
+.titleLetter:nth-child(6) {
+  background:  var(--r);
+  color:       var(--w);
+  border:      3px solid var(--w);
+  box-shadow:
+    inset 0 -4px 0 rgba(0,0,0,0.4),
+    0 0 0 2px var(--b),
+    3px 3px 0 var(--b);
+  font-size:   clamp(26px, 5vw, 56px);
+  transform:   rotate(var(--angle)) scale(1.08);
+  text-shadow: 1px 1px 0 var(--b), -1px -1px 0 rgba(0,0,0,0.5);
+}
+
+/* ════════════════════════════════════════
+   COMUNICADOR — panel de cómic rojo,
+   estilo P5 Royal (mensajería del celular)
+════════════════════════════════════════ */
+.panelWrap {
+  position: relative;
+  z-index:  10;
+  display:  flex;
+  justify-content: center;
+  padding:  0 clamp(16px, 5vw, 72px);
+}
+
+/* ── MARCO (imagen 1, ajustado) — rectángulo de ángulos rectos, más
+   grande, rotado levemente a la derecha, con una capa blanca detrás
+   (un poco más grande) y una capa negra detrás de esa (más grande
+   todavía) — sin esquinas cortadas ni redondeadas. ── */
+.phoneFrame {
+  position:  relative;
+  width:     100%;
+  max-width: 440px;
+  margin:    46px auto 0;
+  transform: rotate(3deg);
+}
+.frameBlack {
+  position:   absolute;
+  inset:      -26px;
+  background: var(--b);
+}
+.frameWhite {
+  position:   absolute;
+  inset:      -13px;
+  background: var(--w);
+}
+.frameRed {
+  position:   relative;
+  background: var(--r);
+  padding:    26px 20px;
+}
+
+/* ── PANTALLA (imagen 2) — solo lo pedido: forma de las burbujas
+   (bubbleShape más abajo), avatares, y un fondo oscuro simple detrás
+   de la conversación, sin chrome adicional. ── */
+.phoneScreen {
+  position:   relative;
+  background: radial-gradient(120% 90% at 50% 0%, #241511 0%, #120a08 55%, #0a0505 100%);
+  padding:    30px 16px 18px;
+}
+
+/* Ícono "M" — logo de la app, esquina superior izquierda, tipo sticker */
+.commIcon {
+  position:    absolute;
+  top:         -16px;
+  left:        18px;
+  width:       46px;
+  height:      46px;
+  background:  var(--b);
+  color:       var(--w);
+  border:      3px solid var(--w);
+  box-shadow:  3px 3px 0 rgba(0,0,0,0.6);
+  transform:   rotate(-4deg);
+  display:     flex;
+  align-items: center;
+  justify-content: center;
+  z-index:     3;
+}
+.commIconSvg {
+  width:  24px;
+  height: 24px;
+  transform: rotate(4deg);
+}
+
+.commName {
+  position:      absolute;
+  top:           -10px;
+  left:          72px;
+  background:    var(--w);
+  color:         var(--b);
+  border:        2px solid var(--b);
+  padding:       2px 10px;
+  font-family:   'Arial Black','Arial',sans-serif;
+  font-size:     11px;
+  font-weight:   900;
+  letter-spacing: 1px;
+  transform:     rotate(2deg);
+  z-index:       3;
+}
+
+/* Ícono GitHub — sticker gemelo de .commIcon, esquina superior derecha */
+.commGithub {
+  position:    absolute;
+  top:         -16px;
+  right:       18px;
+  width:       40px;
+  height:      40px;
+  background:  var(--b);
+  color:       var(--w);
+  border:      3px solid var(--w);
+  box-shadow:  -3px 3px 0 rgba(0,0,0,0.6);
+  transform:   rotate(4deg);
+  display:     flex;
+  align-items: center;
+  justify-content: center;
+  z-index:     3;
+  text-decoration: none;
+  transition:  background 0.12s, border-color 0.12s, transform 0.15s;
+}
+.commGithub:hover {
+  background:   var(--r);
+  transform:    rotate(4deg) scale(1.08);
+}
+.commGithubIcon {
+  width:  20px;
+  height: 20px;
+}
+
+/* ── Hilo de mensajes ── */
+.chatThread {
+  display:        flex;
+  flex-direction: column;
+  gap:            16px;
+  padding:        10px 2px 4px;
+}
+
+.msgRow {
+  display:     flex;
+  align-items: flex-end;
+  gap:         10px;
+  max-width:   88%;
+  opacity:     0;
+  animation:   bubbleIn 0.4s ease-out forwards;
+  animation-delay: calc(var(--d, 0) * 0.35s);
+}
+.msgRowOut {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.msgAvatar {
+  width:      36px;
+  height:     36px;
+  background: var(--b);
+  color:      var(--w);
+  border:     3px solid var(--w);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  transform:  rotate(-3deg);
+  display:    flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Arial Black','Arial',sans-serif;
+  font-size:  11px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+/* Burbuja base — esquinas anguladas tipo cómic (sin bordes redondeados) */
+.msgBubble {
+  margin:      0;
+  font-family: 'Arial','Helvetica',sans-serif;
+  font-size:   13px;
+  font-weight: 700;
+  line-height: 1.4;
+  padding:     14px 22px 18px 18px;
+  box-sizing:  border-box;
+  overflow-wrap: break-word;
+  word-break:  break-word;
+  hyphens:     auto;
+}
+
+/* Entrante: blanca con borde negro, corte en la esquina inferior izq. */
+.msgIncoming {
+  --msgBorder: var(--b);
+  background:  var(--w);
+  color:       var(--b);
+  filter:
+    drop-shadow(3px 0 0 var(--msgBorder))
+    drop-shadow(-3px 0 0 var(--msgBorder))
+    drop-shadow(0 3px 0 var(--msgBorder))
+    drop-shadow(0 -3px 0 var(--msgBorder))
+    drop-shadow(2.1px 2.1px 0 var(--msgBorder))
+    drop-shadow(-2.1px 2.1px 0 var(--msgBorder))
+    drop-shadow(2.1px -2.1px 0 var(--msgBorder))
+    drop-shadow(-2.1px -2.1px 0 var(--msgBorder))
+    drop-shadow(4px 4px 0 rgba(0,0,0,0.45));
+}
+
+/* Saliente (lo que escribes): negra con borde blanco, corte inferior der. */
+.msgOutgoing {
+  --msgBorder: var(--w);
+  background:  var(--b);
+  color:       var(--w);
+  filter:
+    drop-shadow(3px 0 0 var(--msgBorder))
+    drop-shadow(-3px 0 0 var(--msgBorder))
+    drop-shadow(0 3px 0 var(--msgBorder))
+    drop-shadow(0 -3px 0 var(--msgBorder))
+    drop-shadow(2.1px 2.1px 0 var(--msgBorder))
+    drop-shadow(-2.1px 2.1px 0 var(--msgBorder))
+    drop-shadow(2.1px -2.1px 0 var(--msgBorder))
+    drop-shadow(-2.1px -2.1px 0 var(--msgBorder))
+    drop-shadow(4px 4px 0 rgba(0,0,0,0.45));
+}
+
+.msgInput {
+  width:       100%;
+  outline:     none;
+  resize:      none;
+  font-family: inherit;
+}
+.msgInput::placeholder { color: rgba(255,255,255,0.5); }
+.msgOutgoing.msgInput:focus { --msgBorder: var(--y); }
+.msgTextarea { min-height: 64px; }
+
+/* Recuadros de texto (los que se escriben): un solo anillo blanco
+   cerrado (8 direcciones, igual receta que .msgIncoming/.msgOutgoing,
+   que ya viene sin huecos) + sombra suave. Se probó con un segundo
+   anillo negro más grande (16 direcciones por anillo, 33 drop-shadow
+   en total) pero eso volvía carísimo el repintado — en navegadores
+   como Brave llegaba a colgar la pestaña al hacer scroll. Un solo
+   anillo alcanza para que se note sólido y sin dejar de ser legible. */
+.msgOutgoing.msgInput {
+  filter:
+    drop-shadow(3px 0 0 var(--w)) drop-shadow(-3px 0 0 var(--w))
+    drop-shadow(0 3px 0 var(--w)) drop-shadow(0 -3px 0 var(--w))
+    drop-shadow(2.1px 2.1px 0 var(--w)) drop-shadow(-2.1px 2.1px 0 var(--w))
+    drop-shadow(2.1px -2.1px 0 var(--w)) drop-shadow(-2.1px -2.1px 0 var(--w))
+    drop-shadow(5px 5px 0 rgba(0,0,0,0.5));
+}
+.msgOutgoing.msgInput:focus {
+  filter:
+    drop-shadow(3px 0 0 var(--y)) drop-shadow(-3px 0 0 var(--y))
+    drop-shadow(0 3px 0 var(--y)) drop-shadow(0 -3px 0 var(--y))
+    drop-shadow(2.1px 2.1px 0 var(--y)) drop-shadow(-2.1px 2.1px 0 var(--y))
+    drop-shadow(2.1px -2.1px 0 var(--y)) drop-shadow(-2.1px -2.1px 0 var(--y))
+    drop-shadow(5px 5px 0 rgba(0,0,0,0.5));
+}
+
+.statusLine {
+  margin:      2px 0 0;
+  font-family: 'Arial Black','Arial',sans-serif;
+  font-size:   10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  min-height:  12px;
+  text-align:  center;
+  color:       var(--y);
+  opacity:     0;
+}
+.statusLine[data-kind="error"] {
+  opacity:    1;
+  animation:  statusShake 0.4s ease-in-out;
+}
+@keyframes statusShake {
+  0%,100% { transform: translateX(0);   }
+  25%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px);  }
+}
+
+/* ── Pie del panel — texto + botón "Enviar" ── */
+.commFooter {
+  display:        flex;
+  align-items:    center;
+  gap:            10px;
+  margin-top:     14px;
+  padding-top:    12px;
+  border-top:     3px solid var(--b);
+}
+.commFooterHint {
+  flex:        1;
+  font-family: 'Arial','Helvetica',sans-serif;
+  font-size:   11px;
+  font-weight: 700;
+  color:       rgba(0,0,0,0.55);
+  white-space: nowrap;
+  overflow:    hidden;
+  text-overflow: ellipsis;
+}
+.sendBtn {
+  flex-shrink: 0;
+  height:      36px;
+  padding:     0 20px;
+  background:  var(--b);
+  border:      3px solid var(--w);
+  box-shadow:  3px 3px 0 rgba(0,0,0,0.5);
+  color:       var(--w);
+  font-family: 'Arial Black','Arial',sans-serif;
+  font-size:   12px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  display:     flex;
+  align-items: center;
+  justify-content: center;
+  cursor:      pointer;
+  transition:  background 0.12s, transform 0.15s, opacity 0.15s;
+}
+.sendBtn:hover:not(:disabled) { background: var(--r); transform: scale(1.08); }
+.sendBtn:disabled { opacity: 0.5; cursor: default; }
+.sendSpinner {
+  width:  14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: var(--w);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ════════════════════════════════════════
+   BOTTOM BAND
+════════════════════════════════════════ */
+.bottomBand {
+  position:   absolute;
+  bottom:     0;
+  left:       0;
+  right:      0;
+  height:     10%;
+  z-index:    5;
+  background: var(--r);
+  clip-path:  polygon(0 35%, 100% 0%, 100% 100%, 0 100%);
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .frameRed { padding: 18px 12px; }
+  .phoneScreen { padding: 26px 10px 14px; }
+}

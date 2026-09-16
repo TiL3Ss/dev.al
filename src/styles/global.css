@@ -1,0 +1,88 @@
+/* font Minus*/
+@import url('https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+/* font Mayus*/
+@import url('https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+/* font Mayus 2da*/
+@import url('https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+/* font Pixel*/
+@font-face {
+    font-family: 'Pixel';
+    src: url('/public/fonts/bm_space/BMSPA___.TTF') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+/* ───────────────────────────── */
+/* RESET BÁSICO                  */
+/* ───────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin:     0;
+  padding:    0;
+}
+
+html, body {
+  width:      100%;
+  min-height: 100%;
+  background: #020818; /* fallback mientras carga --bg */
+}
+
+/* ───────────────────────────── */
+/* VARIABLES                     */
+/* ───────────────────────────── */
+
+:root {
+  --primary:      #4a90ff;
+  --primary-soft: #8ab0ff;
+
+  --bg:     #020818;
+  --bg2:    #030d22;
+  --bg3:    #060f28;
+
+  --text:   #e8f0ff;
+  --accent: #2563c8;
+  --glow:   rgba(74, 144, 255, .6);
+
+  /* nav triangles */
+  --nav-fill:       rgba(10,  31,  92,  .5);
+  --nav-fill-hover: rgba(26,  58,  143, .7);
+  --nav-stroke:     rgba(100, 160, 255, .5);
+}
+
+/* ───────────────────────────── */
+/* DARK HOUR MODE                */
+/* ───────────────────────────── */
+
+body.dark-hour {
+  --primary:      #6aff7f;
+  --primary-soft: #b7ffbf;
+
+  --bg:     #010b03;
+  --bg2:    #041408;
+  --bg3:    #081d0e;
+
+  --text:   #d8ffe1;
+  --accent: #1c8f46;
+  --glow:   rgba(106, 255, 127, .7);
+
+  /* nav triangles */
+  --nav-fill:       rgba(10,  61,  22,  .5);
+  --nav-fill-hover: rgba(20,  90,  40,  .7);
+  --nav-stroke:     rgba(100, 255, 140, .5);
+}
+
+/* ───────────────────────────── */
+/* GLOBAL TRANSITIONS            */
+/* Solo propiedades que cambian  */
+/* con el tema; excluye opacity  */
+/* para no romper las animaciones*/
+/* ───────────────────────────── */
+
+*:not([style*="animation"]) {
+  transition:
+    background-color .6s ease,
+    color            .6s ease,
+    border-color     .6s ease,
+    box-shadow       .6s ease,
+    filter           .6s ease;
+}

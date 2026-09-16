@@ -1,0 +1,102 @@
+---
+import styles from './Navbar.module.css';
+
+interface Props {
+  /** 'p5' = portafolio principal, cambia de tema P3→P4→P5 según la
+      sección visible (ver script más abajo).
+      'business' = estética máquina de escribir vintage, tema fijo. */
+  variant: 'p5' | 'business';
+}
+
+const { variant } = Astro.props;
+const isBusiness = variant === 'business';
+
+const links = [
+  { label: 'HOME',     href: '#Home' },
+  { label: 'SKILLS',   href: '#Skills' },
+  { label: 'PROJECTS', href: '#Projects' },
+  { label: 'CONTACT',  href: '#Contacts' },
+];
+---
+
+<nav
+  class:list={[styles.navbar, isBusiness && styles.business]}
+  data-navbar
+  data-variant={variant}
+  data-era="p3"
+>
+  <div class={styles.links}>
+    {links.map((l) => (
+      <a href={l.href} class={styles.link}>{l.label}</a>
+    ))}
+  </div>
+
+  {isBusiness ? (
+    <a href="/negocios" class={styles.brand}>A. DEV — CURRICULUM DIGITAL</a>
+  ) : (
+    <a href="/" class={styles.brand}>
+      <img src="/IMG/logo.svg" alt="AL.DEV" class={styles.brandLogo} />
+    </a>
+  )}
+
+  <a
+    class={styles.toggle}
+    href={isBusiness ? '/' : '/negocios'}
+    aria-label={isBusiness ? 'Ver versión interactiva del portafolio' : 'Ver versión profesional del portafolio'}
+  >
+    {isBusiness ? 'Ver versión interactiva ▶' : '⌨ Versión profesional'}
+  </a>
+</nav>
+
+<script>
+  // Solo en el sitio principal (variant="p5") el navbar cambia de tema
+  // P3 → P4 → P5 según qué sección esté a la vista. La versión
+  // "business" no tiene estas secciones, así que no hace nada ahí.
+  function initEraSwitch() {
+    const nav = document.querySelector<HTMLElement>('[data-navbar][data-variant="p5"]');
+    if (!nav) return;
+
+    const eraMap: { id: string; era: string }[] = [
+      { id: 'Home', era: 'p3' },
+      { id: 'Skills', era: 'p4' },
+      { id: 'Projects', era: 'p5' },
+      { id: 'Contacts', era: 'p5' },
+    ];
+    const sections = eraMap
+      .map(({ id, era }) => ({ el: document.getElementById(id), era }))
+      .filter((s): s is { el: HTMLElement; era: string } => s.el !== null);
+
+    if (sections.length === 0) return;
+
+    let ticking = false;
+    function updateEra() {
+      const navHeight = nav!.offsetHeight;
+      const y = window.scrollY + navHeight + 4;
+      let current = sections[0].era;
+      for (const s of sections) {
+        if (s.el.offsetTop <= y) current = s.era;
+      }
+      nav!.setAttribute('data-era', current);
+      ticking = false;
+    }
+
+    updateEra();
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(updateEra);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener('resize', updateEra);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEraSwitch);
+  } else {
+    initEraSwitch();
+  }
+</script>

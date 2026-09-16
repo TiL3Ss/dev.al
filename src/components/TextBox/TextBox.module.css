@@ -1,0 +1,306 @@
+/* ═══════════════════════════════════════════════════════════
+   TextBox.module.css  ·  Persona 5 Royal  ·  Message Window
+   Adaptado del message window original de P5.
+   
+   ESTRUCTURA DE CAPAS (z-index de abajo a arriba):
+   -40  .backgroundWhite  — borde blanco del globo (clip más grande)
+   -30  .backgroundBlack  — cuerpo negro interior (clip más pequeño)
+   -20  .arrowWhite       — cola blanca de la burbuja (clip en 7 puntas)
+   -10  .arrowBlack       — cola negra interior de la burbuja
+     0  .textArea         — contenido (nombre + texto + flecha)
+═══════════════════════════════════════════════════════════ */
+
+.messageWindow {
+  --r:    #e60012;
+  --b:    #000000;
+  --w:    #ffffff;
+  --y:    #fff600;
+  --font: 'Arial Black', Impact, sans-serif;
+
+  position:    relative;
+  width:       100%;
+  font-family: var(--font);
+  user-select: none;
+}
+
+/* ── Área de mensaje — desplazada para dejar espacio a la cola izq ── */
+.messageArea {
+  position: relative;
+  left:     20px; /* espacio para la cola de la burbuja */
+}
+
+/* ── Contenedor relativo que da contexto a las capas absolutas ── */
+.content {
+  position: relative;
+}
+
+/* ════════════════════════════════════════════════
+   COLA DE LA BURBUJA — dos capas apiladas
+   
+   La cola sale por el lado izquierdo del globo.
+   Tiene forma de flecha/rayo con 7 puntos.
+   La capa blanca es ligeramente más grande que la negra
+   → genera el borde blanco visible de la cola.
+   
+   Ambas animan sutilmente con keyframes para
+   darle esa vibración orgánica de los menús P5.
+════════════════════════════════════════════════ */
+
+/* Capa blanca — exterior, más grande */
+.arrowWhite {
+  background-color: var(--w);
+  position:  absolute;
+  width:     70px;   /* era 52px · +35% */
+  height:    70px;   /* era 52px · +35% */
+  bottom:    28px;
+  left:      -48px;  /* era -38px · +10% del contenedor hacia la derecha */
+  z-index:   -20;
+
+  clip-path: polygon(
+    62% 43%, 100% 17%, 100% 73%,
+    50% 100%, 44% 56%, 0 71%, 55% 8%
+  );
+
+  animation: arrowWhiteAnim 1s infinite, arrowMove 1s infinite;
+}
+
+.arrowBlack {
+  background-color: var(--b);
+  position:  absolute;
+  width:     78px;   /* era 58px · +35% */
+  height:    59px;   /* era 44px · +35% */
+  bottom:    32px;
+  left:      -53px;  /* era -38px · +10% hacia la derecha */
+  z-index:   -10;
+
+  clip-path: polygon(
+    62% 43%, 100% 26%, 100% 73%,
+    53% 80%, 44% 56%, 0 71%, 56% 19%
+  );
+
+  animation: arrowBlackAnim 1s infinite, arrowMove 1s infinite;
+}
+
+
+
+/* ════════════════════════════════════════════════
+   CUERPO DEL GLOBO — dos capas apiladas
+   
+   .backgroundWhite es el "borde": clip-path más grande.
+   .backgroundBlack es el fondo interior: clip-path más pequeño,
+   con márgenes que lo encogen dentro del blanco.
+   
+   La diferencia de clip-paths genera un borde blanco
+   de grosor variable — efecto de recorte a mano P5.
+════════════════════════════════════════════════ */
+
+/* Borde blanco — capa más grande, detrás */
+.backgroundWhite {
+  background-color: var(--w);
+  position:  absolute;
+  width:     100%;
+  height:    100%;
+  z-index:   -40;
+
+  /* Paralelogramo diagonal: sup-izq cortada, inf-der más baja */
+  clip-path: polygon(
+    6%   0%,    /* sup-izq: pequeño corte angular */
+    100% 0%,    /* sup-der: esquina larga          */
+    90%  100%,  /* inf-der: retrocede → crea diagonal */
+    0%   87%    /* inf-izq: más alta que inf-der   */
+  );
+
+  animation: backgroundWhiteAnim 1s infinite;
+}
+
+/* Cuerpo negro — capa interior, márgenes la encogen */
+.backgroundBlack {
+  background-color: var(--b);
+  position:    absolute;
+  /* márgenes que crean el borde blanco visible */
+  width:       calc(100% - 25px);
+  height:      calc(100% - 12px);
+  margin-left: 5px;
+  margin-top:  5px;
+  z-index:     -30;
+
+  /* clip ligeramente diferente → borde variable */
+  clip-path: polygon(
+    6%   0%,
+    100% 0%,
+    95%  100%,  /* inf-der un poco más adentro que el blanco */
+    0%   87%
+  );
+
+  animation: backgroundBlackAnim 1s infinite;
+}
+
+/* ════════════════════════════════════════════════
+   CONTENIDO — texto y name badge
+════════════════════════════════════════════════ */
+.textArea {
+  color:          var(--w);
+  position:       relative;
+  padding:        5px 50px 50px 55px;
+  margin-left:    5px;
+  margin-right:   50px;
+  margin-top:     5px;
+  margin-bottom:  7px;
+  line-height:    1.2em;
+}
+
+/* ── Name Badge ── */
+.nameBadge {
+  position:    relative;
+  display:     inline-block;
+  background:  var(--r);
+  margin-bottom: 8px;
+  transform:   rotate(-2deg);
+
+  /* misma forma de cola angular que el globo */
+  clip-path: polygon(4% 0%, 100% 0%, 94% 100%, 0% 100%);
+  box-shadow: -3px 3px 0 var(--b);
+}
+
+.nameBadge span {
+  display:        block;
+  font-size:      clamp(11px, 1.5vw, 14px);
+  font-weight:    900;
+  font-style:     italic;
+  letter-spacing: 2px;
+  color:          var(--w);
+  padding:        4px 20px 4px 10px;
+  text-shadow:    1px 1px 0 var(--b);
+  white-space:    nowrap;
+}
+
+/* ── Texto principal ── */
+.text {
+  font-size:   clamp(14px, 2vw, 20px);
+  line-height: 1.3em;
+  font-weight: 700;
+  margin:      0;
+  transform:   skewX(-3deg);
+  display:     inline-block;
+  width:       100%;
+}
+
+/* palabras clave amarillas */
+.text :global(strong),
+.text :global(.kw) {
+  color:       var(--y);
+  font-weight: 900;
+}
+.text :global(.red) {
+  color:       var(--r);
+  font-weight: 900;
+}
+
+/* ── Next arrow ── */
+.nextArrow {
+  position: absolute;
+  bottom:   8px;
+  right:    20px;
+  width:    0;
+  height:   0;
+  border-left:  11px solid transparent;
+  border-right: 11px solid transparent;
+  border-top:   15px solid var(--r);
+  transform:    rotate(-15deg);
+  animation:    arrowBounce 0.6s infinite alternate ease-in-out;
+}
+
+@keyframes arrowBounce {
+  0%   { transform: translateY(0)   rotate(-15deg) scale(1);    border-top-color: var(--r); }
+  100% { transform: translateY(4px) rotate(-12deg) scale(1.12); border-top-color: var(--b); }
+}
+
+/* ════════════════════════════════════════════════
+   ANIMACIONES DE VIBRACIÓN ORGÁNICA
+   
+   Cada capa anima su clip-path con variaciones mínimas (1-2%)
+   en los vértices → sensación de "dibujo a mano" parpadeando.
+   Todas duran 1s en loop infinito, igual que el original.
+════════════════════════════════════════════════ */
+
+@keyframes arrowWhiteAnim {
+  0%   { clip-path: polygon(62% 43%, 100% 17%, 100% 73%, 50% 100%, 44% 56%, 0   71%, 55% 8%); }
+  25%  { clip-path: polygon(62% 43%, 100% 18%, 99%  73%, 50% 99%,  44% 56%, 0   72%, 55% 8%); }
+  50%  { clip-path: polygon(61% 43%, 98%  17%, 100% 73%, 48% 100%, 43% 56%, 1%  71%, 56% 8%); }
+  75%  { clip-path: polygon(62% 44%, 100% 17%, 100% 72%, 50% 100%, 44% 58%, 0   71%, 55% 9%); }
+  100% { clip-path: polygon(62% 43%, 100% 17%, 100% 73%, 50% 100%, 44% 56%, 0   71%, 55% 8%); }
+}
+
+@keyframes arrowBlackAnim {
+  0%   { clip-path: polygon(62% 43%, 100% 26%, 100% 73%, 53% 80%, 44% 56%, 0   71%, 56% 19%); }
+  25%  { clip-path: polygon(63% 43%, 100% 26%, 98%  73%, 53% 80%, 42% 56%, 1%  71%, 56% 19%); }
+  50%  { clip-path: polygon(62% 44%, 100% 27%, 100% 72%, 53% 81%, 44% 57%, 0   74%, 56% 18%); }
+  75%  { clip-path: polygon(62% 43%, 99%  26%, 100% 73%, 54% 80%, 44% 56%, 0   71%, 57% 19%); }
+  100% { clip-path: polygon(62% 43%, 100% 26%, 100% 73%, 53% 80%, 44% 56%, 0   71%, 56% 19%); }
+}
+
+@keyframes backgroundWhiteAnim {
+  0%   { clip-path: polygon(6% 0%,   100% 0%,   90% 100%, 0%  87%); }
+  25%  { clip-path: polygon(6% 0%,   98%  1%,   90% 100%, 1%  88%); }
+  50%  { clip-path: polygon(6% 2%,   100% 0%,   89% 100%, 0%  87%); }
+  75%  { clip-path: polygon(6% 0%,   100% 0%,   90% 99%,  0%  87%); }
+  100% { clip-path: polygon(6% 0%,   100% 0%,   90% 100%, 0%  87%); }
+}
+
+@keyframes backgroundBlackAnim {
+  0%   { clip-path: polygon(6% 0%,  100% 0%,  95% 100%, 0%  87%); }
+  25%  { clip-path: polygon(7% 0%,  100% 0%,  94% 100%, 0%  88%); }
+  50%  { clip-path: polygon(6% 1%,  100% 0%,  95% 99%,  0%  87%); }
+  75%  { clip-path: polygon(6% 0%,  99%  1%,  95% 100%, 1%  87%); }
+  100% { clip-path: polygon(6% 0%,  100% 0%,  95% 100%, 0%  87%); }
+}
+
+/* ════════════════════════════════════════════════
+   ANIMACIÓN DE ENTRADA
+════════════════════════════════════════════════ */
+.messageWindow.active .backgroundWhite,
+.messageWindow.active .backgroundBlack {
+  animation-name: backgroundWhiteAnim, dialogIn;
+  animation-duration: 1s, 0.4s;
+  animation-iteration-count: infinite, 1;
+  animation-timing-function: linear, cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: none, both;
+}
+
+.messageWindow.active .nameBadge {
+  animation: badgeIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+.messageWindow.active .text {
+  animation: textIn 0.35s ease 0.22s both;
+}
+
+@keyframes dialogIn {
+  from { opacity: 0; transform: scaleX(0.88) skewX(-4deg); }
+  to   { opacity: 1; transform: scaleX(1)    skewX(0deg);  }
+}
+@keyframes badgeIn {
+  from { opacity: 0; transform: rotate(-2deg) translateX(-10px); }
+  to   { opacity: 1; transform: rotate(-2deg) translateX(0);     }
+}
+@keyframes textIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* movimiento sincronizado con la vibración del globo */
+@keyframes arrowMove {
+  0%   { transform: translate(0px,    0px);   }
+  25%  { transform: translate(-1px,   1px);   }
+  50%  { transform: translate(0px,   -1px);   }
+  75%  { transform: translate(1px,    0px);   }
+  100% { transform: translate(0px,    0px);   }
+}
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .messageArea { left: 14px; }
+  .textArea     { padding: 12px 36px 18px 22px; }
+}

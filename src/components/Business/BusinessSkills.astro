@@ -1,0 +1,51 @@
+---
+import styles from './Business.module.css';
+import { getSkills, groupSkillsByCategory } from '../../lib/skills';
+
+// Categorías fijas (decorativas: subtitle en español + dbKey para
+// buscar en la base). Las tecnologías (`techs`) vienen únicamente de
+// Turso — sin datos hardcodeados de respaldo.
+const categories = [
+  { subtitle: 'FRONTEND',        dbKey: 'FRONTEND',  techs: [] as { name: string; rank: number }[] },
+  { subtitle: 'BACKEND',         dbKey: 'BACKEND',   techs: [] as { name: string; rank: number }[] },
+  { subtitle: 'BASES DE DATOS',  dbKey: 'DATABASES', techs: [] as { name: string; rank: number }[] },
+  { subtitle: 'HERRAMIENTAS',    dbKey: 'TOOLS',      techs: [] as { name: string; rank: number }[] },
+];
+
+// Llena cada categoría con los datos reales de Turso (editables desde
+// /sysadmin).
+try {
+  const dbSkills = await getSkills();
+  const grouped = groupSkillsByCategory(dbSkills);
+  for (const cat of categories) {
+    const match = grouped.find((g) => g.subtitle === cat.dbKey);
+    if (match) cat.techs = match.techs;
+  }
+} catch (err) {
+  console.error('[BusinessSkills] No se pudo leer skills de Turso:', err);
+}
+
+const bar = (rank: number) => '█'.repeat(rank) + '░'.repeat(10 - rank);
+---
+
+<section id="Skills" class={styles.skills}>
+  <h2 class={styles.sectionTitle}>Habilidades técnicas</h2>
+  <p class={styles.sectionSub}>— catalogadas por área —</p>
+
+  <div class={styles.skillsGrid}>
+    {categories.map((cat) => (
+      <div class={styles.skillCard}>
+        <h3 class={styles.skillCardTitle}>{cat.subtitle}</h3>
+        <ul class={styles.skillList}>
+          {cat.techs.map((t) => (
+            <li class={styles.skillRow}>
+              <span class={styles.skillName}>{t.name}</span>
+              <span class={styles.skillBar} aria-hidden="true">{bar(t.rank)}</span>
+              <span class={styles.skillRank}>{t.rank}/10</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>

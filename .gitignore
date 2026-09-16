@@ -1,0 +1,37 @@
+# ── Dependencias ──────────────────────────────────────────
+node_modules/
+ 
+# ── Build / output ────────────────────────────────────────
+dist/
+.output/
+.vercel/
+ 
+# ── Cache de Astro / Vite ─────────────────────────────────
+.astro/
+.vite/
+ 
+# ── Variables de entorno ──────────────────────────────────
+# El .env real nunca va al repo (tiene tus credenciales de Turso,
+# SMTP y el código de /sysadmin). .env.example sí se sube, como
+# plantilla.
+.env
+.env.*
+!.env.example
+ 
+# ── Logs ──────────────────────────────────────────────────
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+ 
+# ── Editor / SO ───────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+ 
+# ── TypeScript ────────────────────────────────────────────
+*.tsbuildinfo
+ 

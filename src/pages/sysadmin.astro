@@ -1,0 +1,103 @@
+---
+import '../styles/sysadmin.css';
+import { SESSION_COOKIE, isValidSession } from '../lib/auth';
+import AdminDashboard from '../components/Sysadmin/AdminDashboard.astro';
+
+export const prerender = false;
+
+const authed = isValidSession(Astro.cookies.get(SESSION_COOKIE)?.value);
+
+let initialProjects: any[] = [];
+let initialSkills: any[] = [];
+let initialMessages: any[] = [];
+let loadError: string | null = null;
+
+if (authed) {
+  try {
+    const { getProjects } = await import('../lib/projects');
+    const { getSkills } = await import('../lib/skills');
+    const { getContactMessages } = await import('../lib/messages');
+    [initialProjects, initialSkills, initialMessages] = await Promise.all([
+      getProjects(),
+      getSkills(),
+      getContactMessages(),
+    ]);
+  } catch (err) {
+    loadError = err instanceof Error ? err.message : 'Error desconocido al leer Turso.';
+  }
+}
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet" />
+    <title>sysadmin — AL.DEV</title>
+  </head>
+  <body>
+    {!authed ? (
+      <div id="loginScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 90% at 50% 20%, #131a3a 0%, #0a0e24 60%, #050711 100%);font-family:'BM Space','Cinzel','Arial Black',Arial,sans-serif;color:#e4f0ff;">
+        <form id="loginForm" style="width:100%;max-width:360px;padding:36px 32px;background:#0d1230;border:1px solid rgba(201,162,75,0.25);border-radius:2px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+          <p style="font-size:10px;letter-spacing:3px;color:rgba(228,240,255,0.4);margin:0 0 6px;">AL.DEV</p>
+          <h1 style="font-size:18px;letter-spacing:2px;margin:0 0 22px;">SYSADMIN</h1>
+          <label for="code" style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(228,240,255,0.5);margin-bottom:6px;">Código de acceso</label>
+          <input
+            id="code" name="code" type="password" autocomplete="off" required
+            style="width:100%;background:#0a0e24;border:1px solid rgba(201,162,75,0.3);border-radius:2px;padding:10px 12px;color:#e4f0ff;font-size:14px;letter-spacing:2px;outline:none;"
+          />
+          <p id="loginError" style="min-height:16px;font-size:12px;color:#ff8080;margin:10px 0 0;"></p>
+          <button
+            type="submit"
+            class="water-hover w-full mt-3.5 px-4 py-2.5 bg-[#8ab0ff] text-[#0a0e24] rounded-sm font-bold text-xs tracking-wide uppercase transition-colors"
+            style="font-family:inherit;"
+          >
+            Ingresar
+          </button>
+          <a
+            href="/"
+            class="water-hover block text-center mt-4 px-3 py-2 text-xs tracking-wide uppercase border border-[#e4f0ff]/25 text-[#e4f0ff]/80 rounded-sm hover:border-[#8ab0ff] hover:text-[#8ab0ff] transition-colors no-underline"
+          >
+            ← Volver al home
+          </a>
+        </form>
+      </div>
+      <script>
+        const form = document.getElementById('loginForm') as HTMLFormElement;
+        const errorEl = document.getElementById('loginError')!;
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          errorEl.textContent = '';
+          const code = (document.getElementById('code') as HTMLInputElement).value;
+          try {
+            const res = await fetch('/api/sysadmin/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ code }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+              errorEl.textContent = data.error ?? 'Código incorrecto.';
+              return;
+            }
+            window.location.reload();
+          } catch {
+            errorEl.textContent = 'Error de conexión — intenta de nuevo.';
+          }
+        });
+      </script>
+    ) : loadError ? (
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0e24;color:#ff8080;font-family:monospace;padding:24px;text-align:center;">
+        <p>No se pudo cargar el panel: {loadError}</p>
+      </div>
+    ) : (
+      <AdminDashboard
+        initialProjects={initialProjects}
+        initialSkills={initialSkills}
+        initialMessages={initialMessages}
+      />
+    )}
+  </body>
+</html>

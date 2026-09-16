@@ -1,0 +1,370 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=Cinzel:wght@500;700&display=swap');
+
+@font-face {
+  font-family: 'BM Space';
+  src: url('/fonts/bm_space/BMSPA___.TTF') format('truetype');
+  font-weight: normal;
+  font-style:  normal;
+  font-display: swap;
+}
+
+:root {
+  /* paleta vintage / máquina de escribir (variante business, fija) */
+  --nb-paper:  #efe4c8;
+  --nb-ink:    #2b2420;
+  --nb-ribbon: #7a2a1d;
+}
+
+.navbar {
+  position:    sticky;
+  top:         0;
+  z-index:     500;
+  display:     grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  column-gap:  12px;
+  height:      48px;
+  padding:     0 clamp(10px, 3vw, 28px);
+}
+
+/* ══════════════ ERAS P3 → P4 → P5 (sitio principal) ══════════════
+   Cada era pisa estas variables + la tipografía, el skew de los links
+   y la textura de fondo — no es solo un cambio de color, cada una
+   toma el lenguaje visual real de esa sección:
+   · P3 (Home): Velvet Room — elegante, derecho, serif, línea fina.
+   · P4 (Skills): Inaba — amarillo, letras infladas, tarjetas/stickers.
+   · P5 (Projects/Contact): Tokio — cómic, inclinado, cajas sólidas
+     con borde grueso, mismo lenguaje que el resto de esas secciones.
+   Todo lo que puede transicionar (color, fondo, transform, border-
+   radius) lo hace; la tipografía cambia de una vez junto al resto. */
+.navbar:not(.business) {
+  --era-bg1:      #0a0e24;
+  --era-bg2:      #131a3a;
+  --era-accent:   #e4f0ff;
+  --era-soft:     rgba(228,240,255,0.55);
+  --era-border:   rgba(228,240,255,0.55);
+  --era-skew:     0deg;
+  --era-radius:   0px;
+  --era-font:     'BM Space', 'Cinzel', serif;
+  --era-tracking: 2px;
+
+  background:    linear-gradient(180deg, var(--era-bg1) 0%, var(--era-bg2) 100%);
+  border-bottom: 1px solid var(--era-border);
+  box-shadow:    0 1px 12px rgba(0,0,0,0.5);
+  font-family:   var(--era-font);
+  transition:    background 0.6s ease, border-color 0.6s ease;
+}
+
+/* textura de fondo — sutil, distinta por era (no transiciona: el
+   color de abajo sí, así que el corte se nota poco) */
+.navbar:not(.business)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* ── P3 — Dark Hour, azul medianoche + celeste (Home) ──
+   Derecho, sin textura, línea fina: la elegancia del Velvet Room. */
+.navbar:not(.business)[data-era="p3"] {
+  --era-bg1:      #0a0e24;
+  --era-bg2:      #131a3a;
+  --era-accent:   #e4f0ff;
+  --era-soft:     rgba(228,240,255,0.55);
+  --era-border:   rgba(228,240,255,0.55);
+  --era-skew:     0deg;
+  --era-radius:   0px;
+  --era-font:     'BM Space', 'Cinzel', serif;
+  --era-tracking: 2px;
+}
+.navbar:not(.business)[data-era="p3"]::before { background: none; }
+
+/* ── P4 — Inaba, canal de medianoche de los 90s (Skills) ──
+   Scanlines de tubo CRT, texto con separación RGB (aberración
+   cromática), botón tipo "botón de TV" (bezel oscuro redondeado)
+   en vez del sticker/píldora que tenía antes. */
+.navbar:not(.business)[data-era="p4"] {
+  --era-bg1:      #1a1400;
+  --era-bg2:      #332a00;
+  --era-accent:   #f5c400;
+  --era-soft:     rgba(245,196,0,0.55);
+  --era-border:   rgba(245,196,0,0.55);
+  --era-skew:     3deg;
+  --era-radius:   8px;
+  --era-font:     'Arial Black', Arial, sans-serif;
+  --era-tracking: 1px;
+}
+.navbar:not(.business)[data-era="p4"]::before {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.35) 0px, rgba(0,0,0,0.35) 1px,
+    transparent 1px, transparent 3px
+  );
+}
+/* separación RGB tipo aberración cromática en el texto — cian a la
+   izquierda, magenta a la derecha, como un tubo CRT mal sintonizado */
+.navbar:not(.business)[data-era="p4"] .link,
+.navbar:not(.business)[data-era="p4"] .toggle {
+  text-shadow: 1.2px 0 0 rgba(0,255,255,0.55), -1.2px 0 0 rgba(255,0,180,0.45);
+}
+.navbar:not(.business)[data-era="p4"] .brandLogo {
+  filter: drop-shadow(1.2px 0 0 rgba(0,255,255,0.5)) drop-shadow(-1.2px 0 0 rgba(255,0,180,0.4));
+}
+
+/* ── P5 — Tokio, rojo/negro cómic (Projects, Contact) ──
+   Mismo lenguaje que el resto de esas secciones: inclinado, cajas
+   sólidas de borde grueso, Arial Black. */
+.navbar:not(.business)[data-era="p5"] {
+  --era-bg1:      #1a0000;
+  --era-bg2:      #330000;
+  --era-accent:   #fff5f0;
+  --era-soft:     rgba(255,245,240,0.5);
+  --era-border:   rgba(220,0,0,0.55);
+  --era-skew:     -6deg;
+  --era-radius:   0px;
+  --era-font:     'Arial Black', Arial, sans-serif;
+  --era-tracking: 0.5px;
+}
+.navbar:not(.business)[data-era="p5"]::before {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 2px,
+    transparent 2px, transparent 12px
+  );
+}
+
+.brand {
+  display:      flex;
+  align-items:  center;
+  justify-content: center;
+  flex-shrink:  0;
+  text-decoration: none;
+  grid-column:  2;
+  position:     relative;
+  z-index:      1;
+}
+.brandLogo {
+  height:     38px;
+  width:      auto;
+  display:    block;
+  padding-top: 25%;
+  filter:     drop-shadow(0 0 4px var(--era-soft, rgba(228,240,255,0.35)));
+  transition: filter 0.6s ease;
+}
+
+.links {
+  grid-column: 1;
+  display:  flex;
+  gap:      clamp(8px, 2vw, 22px);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: relative;
+  z-index:  1;
+}
+.links::-webkit-scrollbar { display: none; }
+
+.link {
+  position:       relative;
+  color:          var(--era-soft, rgba(228,240,255,0.7));
+  font-size:      10px;
+  font-weight:    500;
+  letter-spacing: var(--era-tracking, 2px);
+  text-decoration: none;
+  white-space:    nowrap;
+  padding:        4px 7px;
+  transform:      skewX(var(--era-skew, 0deg));
+  border-radius:  var(--era-radius, 0px);
+  transition:     color 0.6s ease, transform 0.6s ease, border-radius 0.6s ease, background 0.15s ease;
+}
+/* P3: línea fina abajo. P4/P5 redefinen la forma más abajo. */
+.link::after {
+  content:    '';
+  position:   absolute;
+  left: 7px; right: 7px; bottom: 0;
+  height:     1px;
+  background: var(--era-accent, #8ab0ff);
+  transform:  scaleX(0);
+  transition: transform 0.2s, background 0.6s ease;
+}
+.link:hover        { color: var(--era-accent, #e4f0ff); }
+.link:hover::after { transform: scaleX(1); }
+
+/* P3: efecto "agua" — en vez de la línea recta, una ola celeste sube
+   desde abajo tapando parte del texto y el texto se hunde/tiembla
+   levemente, como si estuviera bajo el agua (Velvet Room). */
+.navbar:not(.business)[data-era="p3"] .link {
+  display:  inline-block;
+  overflow: hidden;
+}
+.navbar:not(.business)[data-era="p3"] .link::after {
+  left: -15%; right: -15%; bottom: -60%; top: auto; height: 180%;
+  border-radius: 50% 50% 0 0 / 65% 65% 0 0;
+  background: radial-gradient(
+    ellipse at 50% 20%,
+    rgba(138,176,255,0.55) 0%,
+    rgba(138,176,255,0.32) 45%,
+    rgba(138,176,255,0.12) 75%,
+    transparent 100%
+  );
+  transform:  translateY(100%);
+  transition: transform 0.5s cubic-bezier(.34,1.4,.4,1), background 0.6s ease;
+}
+.navbar:not(.business)[data-era="p3"] .link:hover::after {
+  transform: translateY(38%);
+}
+.navbar:not(.business)[data-era="p3"] .link:hover {
+  color:      #cfe3ff;
+  text-shadow: 0 2px 3px rgba(138,176,255,0.5);
+  animation:  underwaterWobble 1.4s ease-in-out infinite;
+}
+@keyframes underwaterWobble {
+  0%,100% { transform: skewX(var(--era-skew, 0deg)) translateY(1px); }
+  50%      { transform: skewX(var(--era-skew, 0deg)) translateY(2.5px); }
+}
+
+/* P4: sticker relleno detrás del texto, en vez de línea */
+.navbar:not(.business)[data-era="p4"] .link::after {
+  left: 0; right: 0; top: 0; bottom: 0; height: auto;
+  border-radius: var(--era-radius);
+  background: var(--era-accent);
+  opacity: 0.16;
+  transform: scale(0.85);
+  transition: transform 0.2s, opacity 0.2s, background 0.6s ease;
+}
+.navbar:not(.business)[data-era="p4"] .link {
+  padding: 8px 14px;
+}
+.navbar:not(.business)[data-era="p4"] .link:hover::after { transform: scale(1); opacity: 0.22; }
+.navbar:not(.business)[data-era="p4"] .link:hover { color: var(--era-accent); }
+
+/* P5: marca diagonal tipo cómic, más gruesa */
+.navbar:not(.business)[data-era="p5"] .link::after {
+  left: 7px; right: 7px; height: 3px;
+  transform: scaleX(0) skewX(-20deg);
+}
+.navbar:not(.business)[data-era="p5"] .link:hover::after { transform: scaleX(1) skewX(-20deg); }
+
+.toggle {
+  grid-column:    3;
+  justify-self:   end;
+  position:       relative;
+  z-index:        1;
+  flex-shrink:    0;
+  background:     transparent;
+  color:          var(--era-accent, #e4f0ff);
+  font-size:      10px;
+  font-weight:    700;
+  letter-spacing: var(--era-tracking, 1px);
+  text-decoration: none;
+  padding:        7px 14px;
+  border:         1px solid var(--era-soft, rgba(228,240,255,0.55));
+  border-radius:  var(--era-radius, 0px);
+  white-space:    nowrap;
+  transform:      skewX(var(--era-skew, 0deg));
+  transition:     background 0.6s ease, color 0.6s ease, border-color 0.6s ease, border-radius 0.6s ease, transform 0.6s ease;
+}
+.toggle > * { display: inline-block; }
+.toggle:hover { background: var(--era-accent, #e4f0ff); color: var(--era-bg1, #0a0e24); border-color: var(--era-accent, #e4f0ff); }
+
+/* P3: mismo efecto de agua que los links, en vez de rellenarse sólido */
+.navbar:not(.business)[data-era="p3"] .toggle {
+  overflow: hidden;
+}
+.navbar:not(.business)[data-era="p3"] .toggle::before {
+  content:    '';
+  position:   absolute;
+  left: -15%; right: -15%; bottom: -60%; height: 180%;
+  border-radius: 50% 50% 0 0 / 65% 65% 0 0;
+  background: radial-gradient(
+    ellipse at 50% 20%,
+    rgba(138,176,255,0.55) 0%,
+    rgba(138,176,255,0.32) 45%,
+    rgba(138,176,255,0.12) 75%,
+    transparent 100%
+  );
+  transform:      translateY(100%);
+  transition:     transform 0.5s cubic-bezier(.34,1.4,.4,1);
+  pointer-events: none;
+}
+.navbar:not(.business)[data-era="p3"] .toggle:hover::before { transform: translateY(30%); }
+.navbar:not(.business)[data-era="p3"] .toggle:hover {
+  background: transparent;
+  color:      #cfe3ff;
+  border-color: var(--era-accent);
+  animation:  underwaterWobble 1.4s ease-in-out infinite;
+}
+
+/* P4: botón tipo "botón de TV vieja" — bezel oscuro grueso, luz
+   amarilla encendida adentro, sin RGB-split (que quede legible) */
+.navbar:not(.business)[data-era="p4"] .toggle {
+  background:    var(--era-accent);
+  color:         var(--era-bg1);
+  border:        3px solid #000;
+  box-shadow:    0 0 0 1px var(--era-accent), inset 0 1px 0 rgba(255,255,255,0.4);
+  text-shadow:   none;
+}
+.navbar:not(.business)[data-era="p4"] .toggle:hover {
+  background:   var(--era-bg1);
+  color:        var(--era-accent);
+  border-color: #000;
+  box-shadow:   0 0 0 1px var(--era-accent), inset 0 0 8px rgba(245,196,0,0.5);
+}
+
+/* P5: caja negra sólida con borde blanco, mismo lenguaje que los
+   demás botones cómic del sitio (titleBtn/githubBtn) */
+.navbar:not(.business)[data-era="p5"] .toggle {
+  background:   #0a0a0a;
+  color:        var(--era-accent);
+  border:       2px solid var(--era-accent);
+}
+.navbar:not(.business)[data-era="p5"] .toggle:hover {
+  background:   #dc0000;
+  color:        #fff;
+  border-color: #dc0000;
+}
+
+/* ══════════════ VARIANTE BUSINESS (typewriter vintage, tema fijo) ══════════════ */
+.navbar.business {
+  background:     var(--nb-paper);
+  border-bottom:  3px double var(--nb-ink);
+  box-shadow:     none;
+  font-family:    'Courier Prime', 'Courier New', monospace;
+}
+
+.navbar.business .brand {
+  font-family:    'Special Elite', 'Courier New', monospace;
+  color:          var(--nb-ink);
+  font-size:      12px;
+  letter-spacing: 0.5px;
+}
+
+.navbar.business .link {
+  color:          var(--nb-ink);
+  font-family:    'Courier Prime', 'Courier New', monospace;
+  font-weight:    700;
+  font-size:      11px;
+  letter-spacing: 0.5px;
+  opacity:        0.8;
+}
+.navbar.business .link::after { background: var(--nb-ribbon); }
+.navbar.business .link:hover { color: var(--nb-ribbon); opacity: 1; }
+
+.navbar.business .toggle {
+  background:     var(--nb-ink);
+  color:          var(--nb-paper);
+  font-family:    'Special Elite', 'Courier New', monospace;
+  border:         1px solid var(--nb-ink);
+}
+.navbar.business .toggle:hover {
+  background:   var(--nb-ribbon);
+  color:        var(--nb-paper);
+  border-color: var(--nb-ribbon);
+}
+
+@media (max-width: 640px) {
+  .links { display: none; }
+  .navbar { grid-template-columns: auto 1fr; }
+  .brand { grid-column: 1; justify-content: flex-start; }
+  .toggle { grid-column: 2; }
+}

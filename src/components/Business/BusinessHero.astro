@@ -1,0 +1,23 @@
+---
+import styles from './Business.module.css';
+
+const name = 'Alvaro';
+const role = 'Backend Developer';
+const intro =
+  'Desarrollador con foco en backend, cómodo trabajando full-stack en proyectos personales. ' +
+  'Trabajo con Python, TypeScript y frameworks de frontend como Astro y Next.js.';
+---
+
+<section id="Home" class={styles.hero}>
+  <div class={styles.paperTexture} aria-hidden="true"></div>
+
+  <div class={styles.heroInner}>
+    <p class={styles.stamp} aria-hidden="true">Ref. N.º 001</p>
+    <h1 class={styles.heroName}>{name}</h1>
+    <p class={styles.heroRole}>{role}</p>
+    <p class={styles.heroDivider} aria-hidden="true">— · —</p>
+    <p class={styles.heroIntro}>{intro}</p>
+
+    <a href="#Projects" class={styles.heroCta}>Ver proyectos ↓</a>
+  </div>
+</section>

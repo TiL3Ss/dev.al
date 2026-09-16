@@ -1,0 +1,701 @@
+---
+import styles from './Project.module.css';
+import TextBox from '../TextBox/TextBox.astro';
+import { getProjects } from '../../lib/projects';
+
+export const prerender = false;
+
+export interface Project {
+  id:       string;
+  title:    string;
+  description: string;
+  logo:     string;
+  logoAlt:  string;
+  techs:    string[];
+  link?:    string;
+}
+
+// Los proyectos vienen únicamente de Turso — sin datos hardcodeados
+// de respaldo. Si la tabla está vacía o Turso no está configurado,
+// la sección simplemente no muestra proyectos (gestionalos desde
+// /sysadmin).
+let projects: Project[] = [];
+try {
+  projects = await getProjects();
+} catch (err) {
+  // No silenciar el error: si Turso está mal configurado (env var faltante,
+  // columna con otro nombre, etc.) esto lo va a mostrar en la terminal de
+  // `pnpm dev` o en los logs de la función en Vercel.
+  console.error('[Projects] No se pudo leer de Turso:', err);
+}
+
+
+function pentagonPoints(cx: number, cy: number, r: number) {
+  return Array.from({ length: 5 }, (_, i) => {
+    const a = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+  });
+}
+
+// Repo de GitHub: si el proyecto trae `link` explícito (ej. desde Turso)
+// se usa ese; si no, se arma a partir del título -> https://github.com/TiL3Ss/<slug>
+const GITHUB_USER = 'TiL3Ss';
+function slugify(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/\./g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+function githubUrl(p: Project) {
+  return p.link ?? `https://github.com/${GITHUB_USER}/${slugify(p.title)}`;
+}
+
+const C = 90;
+---
+
+<section class={styles.projects} id="Projects">
+
+  <!-- ══ FONDO ══ -->
+  <div class={styles.bg} aria-hidden="true">
+
+    <!-- Ciudad P5 Royal — cel-shaded, ojo de pez, grises + rojo -->
+    <div class={styles.cityBg}>
+      <svg viewBox="0 0 1440 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" class={styles.citySvg}>
+        <defs>
+          <!-- Gradiente radial para efecto ojo de pez / distorsión esférica -->
+          <radialGradient id="fisheyeFog" cx="50%" cy="52%" r="72%">
+            <stop offset="0%"   stop-color="#1a1a1f" stop-opacity="0"/>
+            <stop offset="55%"  stop-color="#0d0d10" stop-opacity="0.3"/>
+            <stop offset="85%"  stop-color="#060608" stop-opacity="0.72"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0.95"/>
+          </radialGradient>
+          <!-- Filtro blur suave para capas de fondo (sensación de profundidad) -->
+          <filter id="blurDepth" x="-5%" y="-5%" width="110%" height="110%">
+            <feGaussianBlur stdDeviation="1.2"/>
+          </filter>
+          <!-- Filtro más fuerte para primer plano cel-shaded -->
+          <filter id="celSharp">
+            <feComponentTransfer>
+              <feFuncR type="discrete" tableValues="0 0.18 0.35 0.52 0.68 0.82 1"/>
+              <feFuncG type="discrete" tableValues="0 0.18 0.35 0.52 0.68 0.82 1"/>
+              <feFuncB type="discrete" tableValues="0 0.18 0.35 0.52 0.68 0.82 1"/>
+            </feComponentTransfer>
+          </filter>
+        </defs>
+
+        <!-- ═══ FONDO BASE — cielo nocturno ═══ -->
+        <rect width="1440" height="900" fill="#0a0a0d"/>
+
+        <!-- ═══ CAPA 1: EDIFICIOS LEJANOS (fondo, difusos) ═══ -->
+        <g filter="url(#blurDepth)" opacity="0.55">
+          <!-- Skyline lejano izquierdo -->
+          <rect x="0"   y="310" width="55"  height="590" fill="#1c1c22" stroke="#000" stroke-width="2"/>
+          <rect x="55"  y="270" width="40"  height="630" fill="#181820" stroke="#000" stroke-width="2"/>
+          <rect x="95"  y="290" width="65"  height="610" fill="#1e1e24" stroke="#000" stroke-width="2"/>
+          <rect x="158" y="250" width="50"  height="650" fill="#16161c" stroke="#000" stroke-width="2"/>
+          <rect x="206" y="280" width="80"  height="620" fill="#1a1a20" stroke="#000" stroke-width="2"/>
+          <rect x="284" y="230" width="45"  height="670" fill="#1c1c22" stroke="#000" stroke-width="2"/>
+          <rect x="328" y="260" width="70"  height="640" fill="#181820" stroke="#000" stroke-width="2"/>
+          <!-- Skyline lejano derecho -->
+          <rect x="1050" y="255" width="70"  height="645" fill="#1a1a20" stroke="#000" stroke-width="2"/>
+          <rect x="1118" y="225" width="55"  height="675" fill="#1c1c22" stroke="#000" stroke-width="2"/>
+          <rect x="1170" y="268" width="80"  height="632" fill="#181820" stroke="#000" stroke-width="2"/>
+          <rect x="1248" y="245" width="50"  height="655" fill="#1e1e24" stroke="#000" stroke-width="2"/>
+          <rect x="1296" y="278" width="65"  height="622" fill="#16161c" stroke="#000" stroke-width="2"/>
+          <rect x="1358" y="252" width="82"  height="648" fill="#1a1a20" stroke="#000" stroke-width="2"/>
+          <!-- Skyline lejano superior -->
+          <rect x="400" y="180" width="55"  height="720" fill="#181820" stroke="#000" stroke-width="2"/>
+          <rect x="453" y="155" width="42"  height="745" fill="#1c1c22" stroke="#000" stroke-width="2"/>
+          <rect x="495" y="175" width="68"  height="725" fill="#1a1a20" stroke="#000" stroke-width="2"/>
+          <rect x="562" y="140" width="55"  height="760" fill="#161620" stroke="#000" stroke-width="2"/>
+          <rect x="617" y="165" width="48"  height="735" fill="#1e1e24" stroke="#000" stroke-width="2"/>
+          <rect x="790" y="140" width="58"  height="760" fill="#181820" stroke="#000" stroke-width="2"/>
+          <rect x="846" y="162" width="44"  height="738" fill="#1c1c22" stroke="#000" stroke-width="2"/>
+          <rect x="888" y="178" width="72"  height="722" fill="#1a1a20" stroke="#000" stroke-width="2"/>
+          <rect x="958" y="150" width="50"  height="750" fill="#161620" stroke="#000" stroke-width="2"/>
+          <rect x="1006" y="170" width="46" height="730" fill="#1e1e24" stroke="#000" stroke-width="2"/>
+          <!-- Skyline inferior -->
+          <rect x="100"  y="640" width="80"  height="260" fill="#181820" stroke="#000" stroke-width="2"/>
+          <rect x="280"  y="660" width="65"  height="240" fill="#1a1a20" stroke="#000" stroke-width="2"/>
+          <rect x="1100" y="645" width="78"  height="255" fill="#1c1c22" stroke="#000" stroke-width="2"/>
+          <rect x="1280" y="658" width="62"  height="242" fill="#181820" stroke="#000" stroke-width="2"/>
+        </g>
+
+        <!-- ═══ CAPA 2: EDIFICIOS MEDIOS ═══ -->
+        <g filter="url(#celSharp)" opacity="0.85">
+          <!-- Bloque izquierdo -->
+          <rect x="20"  y="380" width="110" height="520" fill="#252530" stroke="#000" stroke-width="3.5"/>
+          <rect x="28"  y="355" width="38"  height="32"  fill="#1e1e28" stroke="#000" stroke-width="3"/>
+          <rect x="130" y="340" width="90"  height="560" fill="#2a2a36" stroke="#000" stroke-width="3.5"/>
+          <rect x="138" y="310" width="30"  height="35"  fill="#22222c" stroke="#000" stroke-width="3"/><!-- antena -->
+          <rect x="222" y="360" width="120" height="540" fill="#22222e" stroke="#000" stroke-width="3.5"/>
+          <rect x="342" y="320" width="80"  height="580" fill="#282834" stroke="#000" stroke-width="3.5"/>
+          <!-- Bloque derecho -->
+          <rect x="1020" y="335" width="90"  height="565" fill="#252530" stroke="#000" stroke-width="3.5"/>
+          <rect x="1108" y="355" width="115" height="545" fill="#2a2a36" stroke="#000" stroke-width="3.5"/>
+          <rect x="1116" y="325" width="32"  height="35"  fill="#22222c" stroke="#000" stroke-width="3"/>
+          <rect x="1220" y="340" width="100" height="560" fill="#22222e" stroke="#000" stroke-width="3.5"/>
+          <rect x="1318" y="360" width="122" height="540" fill="#282834" stroke="#000" stroke-width="3.5"/>
+          <!-- Bloque superior centro -->
+          <rect x="430" y="220" width="100" height="680" fill="#252530" stroke="#000" stroke-width="3.5"/>
+          <rect x="438" y="192" width="35"  height="32"  fill="#1e1e28" stroke="#000" stroke-width="3"/>
+          <rect x="530" y="195" width="85"  height="705" fill="#2a2a36" stroke="#000" stroke-width="3.5"/>
+          <rect x="538" y="168" width="28"  height="30"  fill="#22222c" stroke="#000" stroke-width="3"/>
+          <rect x="840" y="198" width="88"  height="702" fill="#252530" stroke="#000" stroke-width="3.5"/>
+          <rect x="848" y="170" width="30"  height="32"  fill="#1e1e28" stroke="#000" stroke-width="3"/>
+          <rect x="928" y="210" width="90"  height="690" fill="#2a2a36" stroke="#000" stroke-width="3.5"/>
+          <!-- Bloque inferior -->
+          <rect x="80"  y="660" width="135" height="240" fill="#252530" stroke="#000" stroke-width="3.5"/>
+          <rect x="245" y="680" width="108" height="220" fill="#222230" stroke="#000" stroke-width="3.5"/>
+          <rect x="1075" y="662" width="130" height="238" fill="#252530" stroke="#000" stroke-width="3.5"/>
+          <rect x="1248" y="678" width="110" height="222" fill="#222230" stroke="#000" stroke-width="3.5"/>
+        </g>
+
+        <!-- ═══ CAPA 3: EDIFICIOS PRIMEROS PLANOS (más detallados) ═══ -->
+        <g filter="url(#celSharp)">
+          <!-- Torre izquierda principal -->
+          <rect x="330" y="240" width="145" height="660" fill="#2e2e3a" stroke="#000" stroke-width="4.5"/>
+          <rect x="345" y="210" width="50"  height="36"  fill="#262632" stroke="#000" stroke-width="4"/>
+          <rect x="352" y="182" width="18"  height="32"  fill="#1a1a24" stroke="#000" stroke-width="3"/>
+
+          <!-- Torre derecha principal -->
+          <rect x="975" y="235" width="142" height="665" fill="#2e2e3a" stroke="#000" stroke-width="4.5"/>
+          <rect x="988" y="205" width="48"  height="36"  fill="#262632" stroke="#000" stroke-width="4"/>
+          <rect x="995" y="177" width="18"  height="32"  fill="#1a1a24" stroke="#000" stroke-width="3"/>
+
+          <!-- Edificio rascacielos centro-izq -->
+          <rect x="490" y="160" width="165" height="740" fill="#333340" stroke="#000" stroke-width="5"/>
+          <rect x="502" y="130" width="55"  height="36"  fill="#2a2a36" stroke="#000" stroke-width="4"/>
+          <rect x="510" y="100" width="20"  height="34"  fill="#1c1c28" stroke="#000" stroke-width="3.5"/>
+
+          <!-- Edificio rascacielos centro-der -->
+          <rect x="790" y="155" width="162" height="745" fill="#303040" stroke="#000" stroke-width="5"/>
+          <rect x="802" y="125" width="52"  height="36"  fill="#282836" stroke="#000" stroke-width="4"/>
+          <rect x="810" y="95"  width="20"  height="34"  fill="#1c1c28" stroke="#000" stroke-width="3.5"/>
+
+          <!-- Bloque central planta baja (zona de convergencia perspectiva) -->
+          <rect x="618" y="395" width="215" height="505" fill="#3a3a48" stroke="#000" stroke-width="5"/>
+          <rect x="630" y="375" width="72"  height="24"  fill="#2e2e3a" stroke="#000" stroke-width="4"/>
+
+          <!-- Edificios bajos laterales primer plano -->
+          <rect x="0"   y="560" width="160" height="340" fill="#2a2a36" stroke="#000" stroke-width="4"/>
+          <rect x="160" y="590" width="130" height="310" fill="#282832" stroke="#000" stroke-width="4"/>
+          <rect x="1155" y="565" width="155" height="335" fill="#2a2a36" stroke="#000" stroke-width="4"/>
+          <rect x="1315" y="588" width="125" height="312" fill="#282832" stroke="#000" stroke-width="4"/>
+        </g>
+
+        <!-- ═══ CALLES — perspectiva radial ojo de pez ═══ -->
+        <g opacity="0.38">
+          <!-- calles convergentes al punto de fuga central (720, 500) -->
+          <line x1="720" y1="500" x2="0"    y2="0"   stroke="#111" stroke-width="22" stroke-linecap="round"/>
+          <line x1="720" y1="500" x2="1440" y2="0"   stroke="#111" stroke-width="22" stroke-linecap="round"/>
+          <line x1="720" y1="500" x2="0"    y2="900" stroke="#111" stroke-width="22" stroke-linecap="round"/>
+          <line x1="720" y1="500" x2="1440" y2="900" stroke="#111" stroke-width="22" stroke-linecap="round"/>
+          <line x1="720" y1="500" x2="720"  y2="0"   stroke="#111" stroke-width="16" stroke-linecap="round"/>
+          <line x1="720" y1="500" x2="720"  y2="900" stroke="#111" stroke-width="16" stroke-linecap="round"/>
+          <line x1="720" y1="500" x2="0"    y2="480" stroke="#111" stroke-width="16" stroke-linecap="round"/>
+          <line x1="720" y1="500" x2="1440" y2="480" stroke="#111" stroke-width="16" stroke-linecap="round"/>
+          <!-- calles secundarias -->
+          <line x1="720" y1="500" x2="280"  y2="0"   stroke="#0e0e0e" stroke-width="11"/>
+          <line x1="720" y1="500" x2="580"  y2="0"   stroke="#0e0e0e" stroke-width="11"/>
+          <line x1="720" y1="500" x2="880"  y2="0"   stroke="#0e0e0e" stroke-width="11"/>
+          <line x1="720" y1="500" x2="1160" y2="0"   stroke="#0e0e0e" stroke-width="11"/>
+          <line x1="720" y1="500" x2="0"    y2="280" stroke="#0e0e0e" stroke-width="11"/>
+          <line x1="720" y1="500" x2="0"    y2="680" stroke="#0e0e0e" stroke-width="11"/>
+          <line x1="720" y1="500" x2="1440" y2="280" stroke="#0e0e0e" stroke-width="11"/>
+          <line x1="720" y1="500" x2="1440" y2="680" stroke="#0e0e0e" stroke-width="11"/>
+          <line x1="720" y1="500" x2="380"  y2="900" stroke="#0e0e0e" stroke-width="11"/>
+          <line x1="720" y1="500" x2="1060" y2="900" stroke="#0e0e0e" stroke-width="11"/>
+        </g>
+
+        <!-- ═══ VENTANAS ILUMINADAS — grids por edificio ═══ -->
+        <!-- Torre izq primer plano -->
+        <g class="winGroup1" opacity="0.88">
+          <rect x="343" y="258" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="360" y="258" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="377" y="258" width="11" height="8" fill="#e0e0e0"/>
+          <rect x="394" y="258" width="11" height="8" fill="#f5f5f5"/>
+          <rect x="411" y="258" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="343" y="274" width="11" height="8" fill="#f5f5f5"/>
+          <rect x="360" y="274" width="11" height="8" fill="#e0e0e0"/>
+          <rect x="377" y="274" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="394" y="274" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="343" y="290" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="360" y="290" width="11" height="8" fill="#f5f5f5"/>
+          <rect x="394" y="290" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="411" y="290" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="343" y="306" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="377" y="306" width="11" height="8" fill="#f5f5f5"/>
+          <rect x="394" y="306" width="11" height="8" fill="#e0e0e0"/>
+          <rect x="343" y="322" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="360" y="322" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="411" y="322" width="11" height="8" fill="#f5f5f5"/>
+          <rect x="343" y="338" width="11" height="8" fill="#e0e0e0"/>
+          <rect x="394" y="338" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="411" y="338" width="11" height="8" fill="#e8e8e8"/>
+        </g>
+
+        <!-- Torre der primer plano -->
+        <g class="winGroup2" opacity="0.85">
+          <rect x="983" y="252" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="1000" y="252" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="1017" y="252" width="11" height="8" fill="#f5f5f5"/>
+          <rect x="1034" y="252" width="11" height="8" fill="#e0e0e0"/>
+          <rect x="1051" y="252" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="983" y="268" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="1000" y="268" width="11" height="8" fill="#f5f5f5"/>
+          <rect x="1034" y="268" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="1051" y="268" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="983" y="284" width="11" height="8" fill="#f5f5f5"/>
+          <rect x="1017" y="284" width="11" height="8" fill="#e0e0e0"/>
+          <rect x="1034" y="284" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="983" y="300" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="1000" y="300" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="1051" y="300" width="11" height="8" fill="#f5f5f5"/>
+          <rect x="983" y="316" width="11" height="8" fill="#f0f0f0"/>
+          <rect x="1017" y="316" width="11" height="8" fill="#e8e8e8"/>
+          <rect x="1034" y="316" width="11" height="8" fill="#e0e0e0"/>
+          <rect x="1000" y="332" width="11" height="8" fill="#f5f5f5"/>
+          <rect x="1051" y="332" width="11" height="8" fill="#f0f0f0"/>
+        </g>
+
+        <!-- Rascacielos centro-izq -->
+        <g class="winGroup3" opacity="0.82">
+          <rect x="501" y="178" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="520" y="178" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="539" y="178" width="13" height="9" fill="#f5f5f5"/>
+          <rect x="558" y="178" width="13" height="9" fill="#ffffff"/>
+          <rect x="577" y="178" width="13" height="9" fill="#e0e0e0"/>
+          <rect x="596" y="178" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="501" y="195" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="520" y="195" width="13" height="9" fill="#ffffff"/>
+          <rect x="558" y="195" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="577" y="195" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="501" y="212" width="13" height="9" fill="#f5f5f5"/>
+          <rect x="539" y="212" width="13" height="9" fill="#e0e0e0"/>
+          <rect x="558" y="212" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="596" y="212" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="501" y="229" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="520" y="229" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="577" y="229" width="13" height="9" fill="#f5f5f5"/>
+          <rect x="596" y="229" width="13" height="9" fill="#e0e0e0"/>
+          <rect x="501" y="246" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="539" y="246" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="558" y="246" width="13" height="9" fill="#ffffff"/>
+        </g>
+
+        <!-- Rascacielos centro-der -->
+        <g class="winGroup4" opacity="0.82">
+          <rect x="800" y="173" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="819" y="173" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="838" y="173" width="13" height="9" fill="#ffffff"/>
+          <rect x="857" y="173" width="13" height="9" fill="#e0e0e0"/>
+          <rect x="876" y="173" width="13" height="9" fill="#f5f5f5"/>
+          <rect x="895" y="173" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="800" y="190" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="838" y="190" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="857" y="190" width="13" height="9" fill="#f5f5f5"/>
+          <rect x="895" y="190" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="800" y="207" width="13" height="9" fill="#e0e0e0"/>
+          <rect x="819" y="207" width="13" height="9" fill="#f5f5f5"/>
+          <rect x="876" y="207" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="800" y="224" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="857" y="224" width="13" height="9" fill="#ffffff"/>
+          <rect x="876" y="224" width="13" height="9" fill="#e0e0e0"/>
+          <rect x="895" y="224" width="13" height="9" fill="#f5f5f5"/>
+          <rect x="819" y="241" width="13" height="9" fill="#e8e8e8"/>
+          <rect x="838" y="241" width="13" height="9" fill="#f0f0f0"/>
+          <rect x="800" y="258" width="13" height="9" fill="#e0e0e0"/>
+          <rect x="857" y="258" width="13" height="9" fill="#f5f5f5"/>
+        </g>
+
+        <!-- Edificios medios — ventanas pequeñas -->
+        <g opacity="0.7">
+          <rect x="140" y="362" width="8" height="6" fill="#ddd"/>
+          <rect x="153" y="362" width="8" height="6" fill="#eee"/>
+          <rect x="166" y="362" width="8" height="6" fill="#ddd"/>
+          <rect x="140" y="374" width="8" height="6" fill="#eee"/>
+          <rect x="153" y="374" width="8" height="6" fill="#ddd"/>
+          <rect x="166" y="374" width="8" height="6" fill="#eee"/>
+          <rect x="140" y="386" width="8" height="6" fill="#ddd"/>
+          <rect x="166" y="386" width="8" height="6" fill="#eee"/>
+
+          <rect x="1120" y="358" width="8" height="6" fill="#eee"/>
+          <rect x="1133" y="358" width="8" height="6" fill="#ddd"/>
+          <rect x="1146" y="358" width="8" height="6" fill="#eee"/>
+          <rect x="1120" y="370" width="8" height="6" fill="#ddd"/>
+          <rect x="1146" y="370" width="8" height="6" fill="#eee"/>
+          <rect x="1120" y="382" width="8" height="6" fill="#eee"/>
+          <rect x="1133" y="382" width="8" height="6" fill="#ddd"/>
+          <rect x="1146" y="382" width="8" height="6" fill="#ddd"/>
+        </g>
+
+        <!-- ═══ ANTENAS — brillos puntiagudos estilo luz a lo lejos ═══ -->
+        <!-- Estrella de 4 puntas: diamante elongado verticalmente,
+             con un segundo diamante horizontal más delgado superpuesto,
+             simula el destello óptico de una luz puntual lejana. -->
+
+        <!-- Torre izq principal — grande -->
+        <polygon points="361,170 363,181 361,192 359,181" fill="#dc0000" class="ant1"/>
+        <polygon points="350,181 361,183 372,181 361,179" fill="#dc0000" class="ant1"/>
+        <polygon points="361,174 361.8,181 361,188 360.2,181" fill="#ff4040" class="ant1Halo"/>
+
+        <!-- Torre der principal — grande -->
+        <polygon points="1004,165 1006,176 1004,187 1002,176" fill="#dc0000" class="ant2"/>
+        <polygon points="993,176 1004,178 1015,176 1004,174" fill="#dc0000" class="ant2"/>
+        <polygon points="1004,169 1004.8,176 1004,183 1003.2,176" fill="#ff4040" class="ant2Halo"/>
+
+        <!-- Rascacielos centro-izq — mediano -->
+        <polygon points="520,88  521.5,99  520,110 518.5,99"  fill="#dc0000" class="ant3"/>
+        <polygon points="509,99  520,100.5 531,99  520,97.5"  fill="#dc0000" class="ant3"/>
+        <polygon points="520,92  520.6,99  520,106 519.4,99"  fill="#ff3030" class="ant3Halo"/>
+
+        <!-- Rascacielos centro-der — mediano -->
+        <polygon points="820,83  821.5,94  820,105 818.5,94"  fill="#dc0000" class="ant1"/>
+        <polygon points="809,94  820,95.5  831,94  820,92.5"  fill="#dc0000" class="ant1"/>
+        <polygon points="820,87  820.6,94  820,101 819.4,94"  fill="#ff3030" class="ant1Halo"/>
+
+        <!-- Edificios medios — pequeños -->
+        <polygon points="153,301 154.2,309 153,317 151.8,309" fill="#dc0000" class="ant2"/>
+        <polygon points="145,309 153,310.2 161,309 153,307.8" fill="#dc0000" class="ant2"/>
+
+        <polygon points="148,185 149,192 148,199 147,192"     fill="#dc0000" class="ant3"/>
+        <polygon points="141,192 148,193 155,192 148,191"     fill="#dc0000" class="ant3"/>
+
+        <polygon points="543,159 544.2,167 543,175 541.8,167" fill="#dc0000" class="ant1"/>
+        <polygon points="535,167 543,168.2 551,167 543,165.8" fill="#dc0000" class="ant1"/>
+
+        <polygon points="853,161 854.2,169 853,177 851.8,169" fill="#dc0000" class="ant2"/>
+        <polygon points="845,169 853,170.2 861,169 853,167.8" fill="#dc0000" class="ant2"/>
+
+        <polygon points="1130,316 1131.2,324 1130,332 1128.8,324" fill="#dc0000" class="ant3"/>
+        <polygon points="1122,324 1130,325.2 1138,324 1130,322.8" fill="#dc0000" class="ant3"/>
+
+        <polygon points="1004,162 1005,169 1004,176 1003,169"  fill="#dc0000" class="ant1"/>
+        <polygon points="997,169  1004,170 1011,169 1004,168"  fill="#dc0000" class="ant1"/>
+
+        <!-- Destellos periféricos — muy pequeños, solo la cruz -->
+        <polygon points="68,553  68.8,558 68,563  67.2,558" fill="#dc0000" class="ant2"/>
+        <polygon points="63,558  68,558.8 73,558  68,557.2" fill="#dc0000" class="ant2"/>
+
+        <polygon points="1378,557 1378.8,562 1378,567 1377.2,562" fill="#dc0000" class="ant3"/>
+        <polygon points="1373,562 1378,562.8 1383,562 1378,561.2" fill="#dc0000" class="ant3"/>
+
+        <polygon points="355,667 355.8,672 355,677 354.2,672" fill="#dc0000" class="ant1"/>
+        <polygon points="350,672 355,672.8 360,672 355,671.2" fill="#dc0000" class="ant1"/>
+
+        <polygon points="1090,663 1090.8,668 1090,673 1089.2,668" fill="#dc0000" class="ant2"/>
+        <polygon points="1085,668 1090,668.8 1095,668 1090,667.2" fill="#dc0000" class="ant2"/>
+
+        <!-- Animaciones CSS inline para ventanas y antenas -->
+        <style>{`
+          /* Parpadeo ventanas — grupos con fases distintas */
+          .winGroup1 { animation: winFlicker1 3.8s ease-in-out infinite; }
+          .winGroup2 { animation: winFlicker2 4.2s ease-in-out infinite 0.7s; }
+          .winGroup3 { animation: winFlicker3 3.5s ease-in-out infinite 1.4s; }
+          .winGroup4 { animation: winFlicker4 4.6s ease-in-out infinite 0.3s; }
+
+          @keyframes winFlicker1 {
+            0%,100% { opacity: 0.88; }
+            20%      { opacity: 1.00; }
+            35%      { opacity: 0.55; }
+            55%      { opacity: 0.92; }
+            75%      { opacity: 0.70; }
+          }
+          @keyframes winFlicker2 {
+            0%,100% { opacity: 0.85; }
+            15%      { opacity: 0.60; }
+            40%      { opacity: 1.00; }
+            65%      { opacity: 0.75; }
+            85%      { opacity: 0.95; }
+          }
+          @keyframes winFlicker3 {
+            0%,100% { opacity: 0.82; }
+            25%      { opacity: 1.00; }
+            50%      { opacity: 0.50; }
+            70%      { opacity: 0.90; }
+          }
+          @keyframes winFlicker4 {
+            0%,100% { opacity: 0.82; }
+            30%      { opacity: 0.55; }
+            55%      { opacity: 1.00; }
+            80%      { opacity: 0.78; }
+          }
+
+          /* Antenas — baliza roja estilo señalización */
+          /* transform-box fill-box permite que scale() opere
+             desde el centro geométrico de cada polígono */
+          .ant1, .ant2, .ant3, .ant1Halo, .ant2Halo, .ant3Halo {
+            transform-box:    fill-box;
+            transform-origin: center;
+          }
+          .ant1      { animation: antBlink1 1.8s ease-in-out infinite; }
+          .ant1Halo  { animation: antHalo1  1.8s ease-in-out infinite; }
+          .ant2      { animation: antBlink2 2.2s ease-in-out infinite 0.5s; }
+          .ant2Halo  { animation: antHalo2  2.2s ease-in-out infinite 0.5s; }
+          .ant3      { animation: antBlink3 1.5s ease-in-out infinite 1.1s; }
+          .ant3Halo  { animation: antHalo3  1.5s ease-in-out infinite 1.1s; }
+
+          /* Brillos puntiagudos — destello tipo lente óptico.
+             Los polígonos .ant1/.ant2/.ant3 son la estrella de 4 puntas.
+             Los .ant1Halo son el núcleo brillante interior. */
+          @keyframes antBlink1 {
+            0%,100% { opacity: 1;    fill: #dc0000; transform: scale(1);    }
+            45%      { opacity: 0.08; fill: #800000; transform: scale(0.4);  }
+            55%      { opacity: 1;    fill: #ff3030; transform: scale(1.25); }
+          }
+          @keyframes antHalo1 {
+            0%,100% { opacity: 0.9; fill: #ff6060; transform: scale(1);   }
+            45%      { opacity: 0;   fill: #ff0000; transform: scale(0.2); }
+            55%      { opacity: 1;   fill: #ffffff; transform: scale(1.4); }
+          }
+          @keyframes antBlink2 {
+            0%,100% { opacity: 1;    fill: #dc0000; transform: scale(1);    }
+            40%      { opacity: 1;    fill: #ff2020; transform: scale(1.15); }
+            50%      { opacity: 0.05; fill: #600000; transform: scale(0.3);  }
+            60%      { opacity: 1;    fill: #dc0000; transform: scale(1.1);  }
+          }
+          @keyframes antHalo2 {
+            0%,100% { opacity: 0.85; transform: scale(1);   }
+            50%      { opacity: 0;    transform: scale(0.2); }
+            60%      { opacity: 1;    transform: scale(1.3); }
+          }
+          @keyframes antBlink3 {
+            0%,45%   { opacity: 1;    fill: #ff2020; transform: scale(1);    }
+            50%,55%  { opacity: 0.04; fill: #500000; transform: scale(0.25); }
+            60%,100% { opacity: 1;    fill: #dc0000; transform: scale(1);    }
+          }
+          @keyframes antHalo3 {
+            0%,45%   { opacity: 0.8; transform: scale(1);   }
+            50%,55%  { opacity: 0;   transform: scale(0.1); }
+            60%,100% { opacity: 0.7; transform: scale(1.2); }
+          }
+        `}</style>
+
+        <!-- Viñeta ojo de pez final encima de todo -->
+        <rect width="1440" height="900" fill="url(#fisheyeFog)"/>
+      </svg>
+    </div>
+
+    <div class={styles.cityOverlay}></div>
+    <div class={styles.cityVignette}></div>
+
+    <!-- elementos decorativos manga -->
+    <div class={styles.speedLines}></div>
+    <div class={styles.halftone}></div>
+    <div class={styles.bgSlash1}></div>
+    <div class={styles.bgSlash2}></div>
+    <div class={styles.bgSlash3}></div>
+    {Array.from({ length: 14 }).map((_, i) => (
+      <div class={styles.bgParticle} style={`--pi: ${i}`}></div>
+    ))}
+  </div>
+
+  <!-- ══ HEADER ══
+       Separado en dos: .headerFuse es el que sube con margin-top
+       negativo para fusionarse con el separador de arriba (como un
+       "footer" de esa transición); .header es el contenido en sí,
+       con su propio margin-bottom. Antes era un solo div con ambos
+       márgenes, así que tocar el padding de uno desplazaba todo el
+       componente — separados, cada uno se ajusta sin afectar al otro. -->
+  <div class={styles.headerFuse} aria-hidden="true">
+    <div class={styles.header}>
+      <div class={styles.headerSlash}></div>
+      <div class={styles.headerSlashWhite}></div>
+      <div class={styles.headerRed}></div>
+      <div class={styles.headerShapes}>
+        {[1,2,3,4,5].map(n => (
+          <div class={`${styles.hShape} ${styles[`hs${n}`]}`}></div>
+        ))}
+      </div>
+      <div class={styles.titleCollage}>
+        {'PROJECTS'.split('').map((l, i) => (
+          <span
+            class={styles.titleLetter}
+            style={`--angle: ${[-6,8,-10,5,-8,9,-5,7][i]}deg; --i: ${i}`}
+          >{l}</span>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LISTA ══ -->
+  <div class={styles.list}>
+    {projects.map((p, idx) => {
+      const outer = pentagonPoints(C, C, 72);
+      const mid   = pentagonPoints(C, C, 48);
+      const inner = pentagonPoints(C, C, 24);
+      const polyO = outer.map(pt => `${pt.x},${pt.y}`).join(' ');
+      const polyM = mid.map(pt => `${pt.x},${pt.y}`).join(' ');
+      const polyI = inner.map(pt => `${pt.x},${pt.y}`).join(' ');
+      const isAlt = idx % 2 === 1;
+
+      return (
+        <article class={styles.card} style={`--idx: ${idx}`} data-alt={isAlt}>
+
+          <!-- número fantasma -->
+          <div class={styles.cardIndex}>
+            <span class={styles.cardIndexNum}>0{idx + 1}</span>
+          </div>
+
+          <!-- ══ STAR SIDE ══ -->
+          <div class={`${styles.starSide} ${isAlt ? styles.starRight : ''}`}>
+            <div class={styles.starRingOuter}></div>
+            <div class={styles.starRingInner}></div>
+
+            <svg
+              class={styles.statStar}
+              viewBox="0 0 180 180"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-label={`Tecnologías de ${p.title}`}
+            >
+              {/* guías internas (pentágonos concéntricos) */}
+              {(() => {
+                const outer = pentagonPoints(C, C, 72);
+                const mid   = pentagonPoints(C, C, 48);
+                const inner = pentagonPoints(C, C, 24);
+                const polyO = outer.map(pt => `${pt.x},${pt.y}`).join(' ');
+                const polyM = mid.map(pt => `${pt.x},${pt.y}`).join(' ');
+                const polyI = inner.map(pt => `${pt.x},${pt.y}`).join(' ');
+                return (
+                  <>
+                    <polygon points={polyO} class={styles.starLineO} />
+                    <polygon points={polyM} class={styles.starLineM} />
+                    <polygon points={polyI} class={styles.starLineI} />
+                    {outer.map(pt => (
+                      <line x1={C} y1={C} x2={pt.x} y2={pt.y} class={styles.starAxis} />
+                    ))}
+                  </>
+                );
+              })()}
+
+              {/* 5 puntas — cada punta normalizada apuntando al NORTE,
+                  dentro de un <g rotate> que la lleva a su ángulo real.
+                  Cada punta se divide en dos polígonos:
+                  - starPointBase: cuña fija centro→base, NUNCA se anima,
+                    así las 5 uniones en el centro siempre calzan exactas.
+                  - starPointTip: triángulo base→punta, con
+                    transform-origin en la línea de base (no en el centro),
+                    así el scaleY estira solo hacia afuera sin mover la base
+                    y sin separarse de la cuña fija. */}
+              {Array.from({ length: 5 }, (_, i) => {
+                const angleDeg = (360 * i) / 5;
+                const outerR = 72, innerR = 30;
+                const halfBase = Math.sin((Math.PI * 2 * 0.5) / 5) * innerR;
+                const baseY    = C - Math.cos((Math.PI * 2 * 0.5) / 5) * innerR;
+                const basePts = `${C},${C} ${C - halfBase},${baseY} ${C + halfBase},${baseY}`;
+                const tipPts  = `${C - halfBase},${baseY} ${C},${C - outerR} ${C + halfBase},${baseY}`;
+                return (
+                  <g key={i} transform={`rotate(${angleDeg}, ${C}, ${C})`}>
+                    <polygon points={basePts} class={styles.starPointBase} />
+                    <polygon
+                      points={tipPts}
+                      class={`${styles.starPoint} ${styles['starPoint' + (i+1)]}`}
+                    />
+                  </g>
+                );
+              })}
+
+              <circle cx={C} cy={C} r="4" class={styles.starCore} />
+
+              {/* labels de tecnologías en las puntas */}
+              {Array.from({ length: 5 }, (_, i) => {
+                const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                const lx = C + 90 * Math.cos(angle);
+                const ly = C + 90 * Math.sin(angle);
+                return (
+                  <text key={i} x={lx} y={ly} class={styles.starLabel}
+                    text-anchor="middle" dominant-baseline="middle">
+                    {p.techs[i] ?? ''}
+                  </text>
+                );
+              })}
+            </svg>
+
+            <!-- ══ PENTÁGONO central — cubre el centro de la estrella ══ -->
+            {(() => {
+              const pR    = 38;
+              const pRin  = 32;
+              const mkPts = (r: number) => Array.from({ length: 5 }, (_, i) => {
+                const a = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                return `${(C + r * Math.cos(a)).toFixed(2)},${(C + r * Math.sin(a)).toFixed(2)}`;
+              }).join(' ');
+              const outerPts = mkPts(pR);
+              const innerPts = mkPts(pRin);
+              return (
+                <div class={styles.pentaFrame}>
+                  <svg class={styles.pentaSvg} viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+                    {/* Capa posterior — color opuesto (rojo), offset abajo, z-index menor */}
+                    <polygon points={outerPts} class={styles.pentaShadow} transform="translate(5,5)" />
+                    {/* Capa frontal — negro, borde blanco, z-index mayor */}
+                    <polygon points={outerPts} class={styles.pentaFront} />
+                    {/* Línea interior decorativa */}
+                    <polygon points={innerPts} class={styles.pentaInner} />
+                  </svg>
+                  {/* Logo centrado sobre el pentágono */}
+                  <div class={styles.pentaIconSlot}>
+                    <img src={p.logo} alt={p.logoAlt} class={styles.logoImg} />
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          <!-- ══ DIALOG SIDE ══ -->
+          <div class={`${styles.dialogSide} ${isAlt ? styles.dialogLeft : ''}`}>
+            <!-- título botón + botón GitHub -->
+            <div class={styles.titleRow}>
+              <button
+                class={styles.titleBtn}
+                data-id={p.id}
+                aria-label={`Ver detalle de ${p.title}`}
+              >
+                <span class={styles.titleSticker}></span>
+                <span class={styles.titleMain}>{p.title}</span>
+                <span class={styles.titleChevron}>▶</span>
+              </button>
+
+              <a
+                class={styles.githubBtn}
+                href={githubUrl(p)}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Ver repositorio de ${p.title} en GitHub`}
+              >
+                <svg viewBox="0 0 24 24" class={styles.githubIcon} aria-hidden="true">
+                  <path fill="currentColor" d="M12 .5C5.73.5.98 5.24.98 11.52c0 4.94 3.2 9.13 7.65 10.6.56.1.76-.24.76-.53 0-.26-.01-1.12-.02-2.03-3.11.68-3.77-1.32-3.77-1.32-.5-1.28-1.23-1.62-1.23-1.62-1-.69.08-.68.08-.68 1.11.08 1.7 1.14 1.7 1.14.98 1.68 2.58 1.2 3.21.92.1-.71.39-1.2.7-1.48-2.48-.28-5.1-1.24-5.1-5.53 0-1.22.44-2.22 1.15-3-.11-.28-.5-1.42.11-2.96 0 0 .95-.3 3.1 1.15a10.7 10.7 0 0 1 5.64 0c2.15-1.45 3.1-1.15 3.1-1.15.61 1.54.22 2.68.11 2.96.72.78 1.15 1.78 1.15 3 0 4.3-2.63 5.24-5.13 5.52.4.35.76 1.04.76 2.1 0 1.52-.01 2.74-.01 3.11 0 .29.2.64.77.53 4.44-1.48 7.64-5.66 7.64-10.6C23.02 5.24 18.27.5 12 .5Z"/>
+                </svg>
+              </a>
+            </div>
+
+            <!-- TextBox con la forma P5 correcta -->
+            <TextBox
+              speaker={p.id.replace('proj-', 'PROJECT_') + '.md'}
+              text={p.description}
+              active={true}
+            />
+
+            <!-- tech tags: mini cartas con la misma estética del globo
+                 de texto (TextBox) — capa sombra + borde blanco + cuerpo
+                 de color, clip-path en paralelogramo recortado a mano. -->
+            <div class={styles.techTags}>
+              {p.techs.map((t, ti) => (
+                <span class={styles.techTag} style={`--ti: ${ti}`}>
+                  <span class={styles.techCardShadow}></span>
+                  <span class={styles.techCardWhite}></span>
+                  <span class={styles.techCardBody}></span>
+                  <span class={styles.techTagText}>{t}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+        </article>
+      );
+    })}
+  </div>
+
+  <div class={styles.bottomBand} aria-hidden="true"></div>
+
+</section>

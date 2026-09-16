@@ -1,0 +1,44 @@
+/* Tailwind se usa SOLO en /sysadmin (panel de administración). El
+   resto del sitio usa CSS modules a mano, así que este import se deja
+   scopeado a esta página para no arrastrar el preflight de Tailwind
+   (reset de márgenes/fuentes) al resto del portafolio. */
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'BM Space';
+  src: url('/fonts/bm_space/BMSPA___.TTF') format('truetype');
+  font-weight: normal;
+  font-style:  normal;
+  font-display: swap;
+}
+
+/* Mismo efecto "agua" del hover P3 del navbar, reutilizado acá para
+   que los botones del panel tengan el mismo lenguaje. Se agrega junto
+   a las clases de Tailwind del botón (necesita position:relative +
+   overflow:hidden, que esta clase ya trae). */
+.water-hover {
+  position: relative;
+  overflow: hidden;
+}
+.water-hover::before {
+  content:    '';
+  position:   absolute;
+  left: -15%; right: -15%; bottom: -60%; height: 180%;
+  border-radius:  50% 50% 0 0 / 65% 65% 0 0;
+  background: radial-gradient(
+    ellipse at 50% 20%,
+    rgba(138,176,255,0.55) 0%,
+    rgba(138,176,255,0.32) 45%,
+    rgba(138,176,255,0.12) 75%,
+    transparent 100%
+  );
+  transform:      translateY(100%);
+  transition:     transform 0.5s cubic-bezier(.34,1.4,.4,1);
+  pointer-events: none;
+}
+.water-hover:hover::before { transform: translateY(30%); }
+.water-hover:hover { animation: waterWobble 1.4s ease-in-out infinite; }
+@keyframes waterWobble {
+  0%,100% { transform: translateY(0);    }
+  50%      { transform: translateY(1.5px); }
+}

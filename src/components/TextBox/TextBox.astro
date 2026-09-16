@@ -1,0 +1,40 @@
+---
+import styles from './TextBox.module.css';
+
+interface Props {
+  speaker: string;
+  text:    string;
+  active?: boolean;
+}
+
+const { speaker, text, active = true } = Astro.props;
+---
+
+<div class:list={[styles.messageWindow, { [styles.active]: active }]}>
+  <div class={styles.messageArea}>
+    <div class={styles.content}>
+
+      <!-- flecha blanca (capa superior de la cola) -->
+      <div class={styles.arrowWhite}></div>
+      <!-- flecha negra (capa inferior de la cola) -->
+      <div class={styles.arrowBlack}></div>
+
+      <!-- borde blanco del globo -->
+      <div class={styles.backgroundWhite}></div>
+      <!-- cuerpo negro del globo -->
+      <div class={styles.backgroundBlack}></div>
+
+      <!-- contenido -->
+      <div class={styles.textArea}>
+        <!-- name badge -->
+        <div class={styles.nameBadge}>
+        </div>
+        <!-- texto con soporte HTML para <strong> y .red -->
+        <p class={styles.text} set:html={text}></p>
+        <!-- indicador de siguiente -->
+        <div class={styles.nextArrow} aria-hidden="true"></div>
+      </div>
+
+    </div>
+  </div>
+</div>

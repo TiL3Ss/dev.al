@@ -1,0 +1,119 @@
+---
+import styles from './Business.module.css';
+---
+
+<section id="Contacts" class={styles.contact}>
+  <h2 class={styles.sectionTitle}>Contacto</h2>
+  <p class={styles.sectionSub}>— escribime una carta —</p>
+
+  <div class={styles.letterWrap}>
+    <form class={styles.letter} id="bizContactForm" novalidate>
+      <p class={styles.letterLine}>Para: <span class={styles.letterFixed}>Alvaro</span></p>
+      <p class={styles.letterLine}>
+        De:
+        <input
+          class={styles.letterInput}
+          type="text"
+          id="bcf-name"
+          name="name"
+          autocomplete="name"
+          required
+          maxlength="200"
+          placeholder="tu nombre"
+        />
+      </p>
+      <p class={styles.letterLine}>
+        Correo de respuesta:
+        <input
+          class={styles.letterInput}
+          type="email"
+          id="bcf-email"
+          name="email"
+          autocomplete="email"
+          required
+          maxlength="200"
+          placeholder="tucorreo@ejemplo.com"
+        />
+      </p>
+      <label class={styles.letterBodyLabel} for="bcf-message">Mensaje:</label>
+      <textarea
+        class={styles.letterBody}
+        id="bcf-message"
+        name="message"
+        required
+        maxlength="5000"
+        rows="6"
+        placeholder="Escribe tu mensaje aquí…"
+      ></textarea>
+
+      <p class={styles.letterStatus} id="bcf-status" role="status" aria-live="polite"></p>
+
+      <button type="submit" class={styles.letterSubmit} id="bcf-submit">
+        <span data-state="idle">Enviar carta</span>
+        <span data-state="sending" hidden>Enviando…</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<script>
+  const init = () => {
+    const form   = document.getElementById('bizContactForm') as HTMLFormElement | null;
+    const submit = document.getElementById('bcf-submit') as HTMLButtonElement | null;
+    const status = document.getElementById('bcf-status');
+    if (!form || !submit || !status) return;
+
+    const idleLabel    = submit.querySelector('[data-state="idle"]') as HTMLElement | null;
+    const sendingLabel = submit.querySelector('[data-state="sending"]') as HTMLElement | null;
+
+    const setSending = (sending: boolean) => {
+      submit.disabled = sending;
+      if (idleLabel)    idleLabel.hidden    = sending;
+      if (sendingLabel) sendingLabel.hidden = !sending;
+    };
+    const setStatus = (msg: string, kind: 'error' | 'ok' | '') => {
+      status.textContent = msg;
+      if (kind) status.dataset.kind = kind; else status.removeAttribute('data-kind');
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      setStatus('', '');
+
+      const name    = (document.getElementById('bcf-name')    as HTMLInputElement).value.trim();
+      const email   = (document.getElementById('bcf-email')   as HTMLInputElement).value.trim();
+      const message = (document.getElementById('bcf-message') as HTMLTextAreaElement).value.trim();
+
+      if (!name || !email || !message) {
+        setStatus('Completa los 3 campos antes de enviar', 'error');
+        return;
+      }
+
+      setSending(true);
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, message }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setStatus(data.error ?? 'No se pudo enviar — intenta de nuevo', 'error');
+          return;
+        }
+        setStatus('Carta enviada. Te respondo apenas pueda.', 'ok');
+        form.reset();
+      } catch {
+        setStatus('Error de conexión — intenta de nuevo', 'error');
+      } finally {
+        setSending(false);
+      }
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>

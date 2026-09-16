@@ -1,0 +1,349 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap');
+
+:root {
+  --bz-paper:      #efe4c8;
+  --bz-paper-dark: #e4d6ae;
+  --bz-ink:        #2b2420;
+  --bz-ink-soft:   rgba(43,36,32,0.65);
+  --bz-ribbon:     #7a2a1d;
+  --bz-line:       rgba(43,36,32,0.18);
+}
+
+/* ── Textura de papel envejecido: reutilizable en cada sección ── */
+.paperTexture {
+  position: absolute;
+  inset:    0;
+  z-index:  0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px, transparent 27px,
+      var(--bz-line) 27px, var(--bz-line) 28px
+    ),
+    radial-gradient(ellipse at 20% 15%, rgba(122,42,29,0.05), transparent 45%),
+    radial-gradient(ellipse at 80% 85%, rgba(122,42,29,0.05), transparent 45%),
+    radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(43,36,32,0.14) 100%);
+}
+
+/* ════════════════════════════════════════
+   HERO
+════════════════════════════════════════ */
+.hero {
+  position:   relative;
+  min-height: 100vh;
+  background: var(--bz-paper);
+  display:    flex;
+  align-items: center;
+  justify-content: center;
+  padding:    120px 20px 60px;
+  overflow:   hidden;
+}
+
+.heroInner {
+  position:  relative;
+  z-index:   1;
+  max-width: 640px;
+  text-align: center;
+}
+
+.stamp {
+  display:        inline-block;
+  font-family:    'Courier Prime', monospace;
+  font-size:      11px;
+  letter-spacing: 2px;
+  color:          var(--bz-ribbon);
+  border:         1px solid var(--bz-ribbon);
+  padding:        3px 10px;
+  transform:      rotate(-3deg);
+  margin-bottom:  22px;
+}
+
+.heroName {
+  font-family:    'Special Elite', 'Courier New', monospace;
+  font-size:      clamp(40px, 9vw, 76px);
+  color:          var(--bz-ink);
+  letter-spacing: 2px;
+  line-height:    1;
+  position:       relative;
+  display:        inline-block;
+  border-right:   3px solid var(--bz-ink);
+  white-space:    nowrap;
+  overflow:       hidden;
+  animation:      bzType 1.4s steps(8, end) 1 both, bzCaret 0.8s step-end infinite;
+}
+@keyframes bzType {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+@keyframes bzCaret {
+  0%,100% { border-color: var(--bz-ink); }
+  50%      { border-color: transparent; }
+}
+
+.heroRole {
+  margin-top:     10px;
+  font-family:    'Courier Prime', monospace;
+  font-size:      clamp(13px, 2vw, 16px);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color:          var(--bz-ribbon);
+}
+
+.heroDivider {
+  margin:      18px 0;
+  color:       var(--bz-ink-soft);
+  font-family: 'Courier Prime', monospace;
+  letter-spacing: 6px;
+}
+
+.heroIntro {
+  font-family: 'Courier Prime', monospace;
+  font-size:   14px;
+  line-height: 1.7;
+  color:       var(--bz-ink);
+}
+
+.heroCta {
+  display:        inline-block;
+  margin-top:     30px;
+  font-family:    'Courier Prime', monospace;
+  font-weight:    700;
+  font-size:      13px;
+  letter-spacing: 1px;
+  color:          var(--bz-paper);
+  background:     var(--bz-ink);
+  padding:        10px 20px;
+  text-decoration: none;
+  border:         1px solid var(--bz-ink);
+  transition:     background 0.15s, color 0.15s;
+}
+.heroCta:hover { background: var(--bz-ribbon); border-color: var(--bz-ribbon); }
+
+/* ════════════════════════════════════════
+   TÍTULOS DE SECCIÓN (compartido)
+════════════════════════════════════════ */
+.sectionTitle {
+  font-family:    'Special Elite', 'Courier New', monospace;
+  font-size:      clamp(24px, 4vw, 34px);
+  color:          var(--bz-ink);
+  text-align:     center;
+  letter-spacing: 1px;
+}
+.sectionSub {
+  text-align:     center;
+  font-family:    'Courier Prime', monospace;
+  font-style:     italic;
+  color:          var(--bz-ink-soft);
+  margin-bottom:  40px;
+  font-size:      13px;
+}
+
+/* ════════════════════════════════════════
+   SKILLS
+════════════════════════════════════════ */
+.skills {
+  background: var(--bz-paper-dark);
+  padding:    80px 20px;
+}
+
+.skillsGrid {
+  max-width: 1000px;
+  margin:    0 auto;
+  display:   grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap:       28px;
+}
+
+.skillCard {
+  background: var(--bz-paper);
+  border:     1px solid var(--bz-ink);
+  box-shadow: 4px 4px 0 rgba(43,36,32,0.25);
+  padding:    18px 20px;
+}
+
+.skillCardTitle {
+  font-family:    'Special Elite', monospace;
+  font-size:      15px;
+  color:          var(--bz-ribbon);
+  letter-spacing: 1px;
+  margin-bottom:  12px;
+  padding-bottom: 6px;
+  border-bottom:  1px dashed var(--bz-line);
+}
+
+.skillList { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.skillRow {
+  display:        grid;
+  grid-template-columns: 74px 1fr 34px;
+  align-items:    center;
+  gap:            8px;
+  font-family:    'Courier Prime', monospace;
+  font-size:      11.5px;
+  color:          var(--bz-ink);
+}
+.skillName  { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.skillBar   { letter-spacing: -1px; color: var(--bz-ribbon); font-size: 10px; }
+.skillRank  { text-align: right; color: var(--bz-ink-soft); }
+
+/* ════════════════════════════════════════
+   PROJECTS
+════════════════════════════════════════ */
+.projects {
+  background: var(--bz-paper);
+  padding:    80px 20px;
+}
+
+.projectsList {
+  max-width: 760px;
+  margin:    0 auto;
+  display:   flex;
+  flex-direction: column;
+  gap:       26px;
+}
+
+.projectCard {
+  position:   relative;
+  background: var(--bz-paper);
+  border:     1px solid var(--bz-ink);
+  padding:    22px 26px;
+  box-shadow: 5px 5px 0 rgba(43,36,32,0.2);
+}
+
+.projectCardHead {
+  display:      flex;
+  align-items:  baseline;
+  gap:          10px;
+  margin-bottom: 8px;
+}
+.projectIndex {
+  font-family: 'Courier Prime', monospace;
+  color:       var(--bz-ribbon);
+  font-weight: 700;
+}
+.projectTitle {
+  font-family:    'Special Elite', monospace;
+  font-size:      18px;
+  letter-spacing: 1px;
+  color:          var(--bz-ink);
+}
+.projectDesc {
+  font-family: 'Courier Prime', monospace;
+  font-size:   13px;
+  line-height: 1.65;
+  color:       var(--bz-ink);
+  margin-bottom: 10px;
+}
+.projectTechs {
+  font-family: 'Courier Prime', monospace;
+  font-size:   11.5px;
+  font-style:  italic;
+  color:       var(--bz-ink-soft);
+  margin-bottom: 12px;
+}
+.projectLink {
+  font-family:    'Courier Prime', monospace;
+  font-weight:    700;
+  font-size:      12px;
+  letter-spacing: 0.5px;
+  color:          var(--bz-ribbon);
+  text-decoration: none;
+}
+.projectLink:hover { text-decoration: underline; }
+
+/* ════════════════════════════════════════
+   CONTACT — carta tipeada
+════════════════════════════════════════ */
+.contact {
+  background: var(--bz-paper-dark);
+  padding:    80px 20px 100px;
+}
+
+.letterWrap {
+  display: flex;
+  justify-content: center;
+}
+
+.letter {
+  width:      100%;
+  max-width:  520px;
+  background: var(--bz-paper);
+  border:     1px solid var(--bz-ink);
+  box-shadow: 6px 6px 0 rgba(43,36,32,0.25);
+  padding:    30px 32px;
+  font-family: 'Courier Prime', monospace;
+  color:       var(--bz-ink);
+}
+
+.letterLine {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  font-size:     13px;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  border-bottom: 1px dashed var(--bz-line);
+}
+.letterFixed { font-weight: 700; }
+
+.letterInput {
+  flex:        1;
+  background:  transparent;
+  border:      none;
+  border-bottom: 1px solid var(--bz-ink);
+  font-family: 'Courier Prime', monospace;
+  font-size:   13px;
+  color:       var(--bz-ink);
+  padding:     2px 4px;
+}
+.letterInput:focus { outline: none; border-color: var(--bz-ribbon); }
+.letterInput::placeholder { color: rgba(43,36,32,0.4); }
+
+.letterBodyLabel {
+  display:     block;
+  font-size:   13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.letterBody {
+  width:       100%;
+  background:  rgba(255,255,255,0.35);
+  border:      1px solid var(--bz-line);
+  font-family: 'Courier Prime', monospace;
+  font-size:   13px;
+  color:       var(--bz-ink);
+  padding:     10px;
+  resize:      vertical;
+  line-height: 1.6;
+}
+.letterBody:focus { outline: none; border-color: var(--bz-ribbon); }
+.letterBody::placeholder { color: rgba(43,36,32,0.4); }
+
+.letterStatus {
+  min-height: 16px;
+  font-size:  12px;
+  margin:     12px 0 4px;
+}
+.letterStatus[data-kind="error"] { color: #a11616; }
+.letterStatus[data-kind="ok"]    { color: #2f6b2f; }
+
+.letterSubmit {
+  margin-top:     16px;
+  width:          100%;
+  background:     var(--bz-ink);
+  color:          var(--bz-paper);
+  border:         1px solid var(--bz-ink);
+  font-family:    'Special Elite', monospace;
+  font-size:      13px;
+  letter-spacing: 1px;
+  padding:        12px;
+  cursor:         pointer;
+  transition:     background 0.15s;
+}
+.letterSubmit:hover:not(:disabled) { background: var(--bz-ribbon); }
+.letterSubmit:disabled { opacity: 0.6; cursor: default; }
+
+@media (max-width: 640px) {
+  .skillRow { grid-template-columns: 64px 1fr 30px; font-size: 10.5px; }
+  .letter   { padding: 24px 20px; }
+}

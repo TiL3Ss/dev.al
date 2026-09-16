@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar/Navbar.astro';
+import Hero from '../components/Hero/Hero.astro';
+import Tecs from '../components/Tecs/Tecs.astro';
+import Projects from '../components/Projects/Project.astro';
+import Contacts from '../components/Contacts/Contacts.astro';
+import TransitP3P4 from '../components/TransitP3P4/TransitP3P4.astro';
+import TransitP4P5 from '../components/TransitP4P5/TransitP4P5.astro';
+import TransitP5aMemento from '../components/TransitP5aMemento/TransitP5aMemento.astro';
+---
+
+<Layout title="AL.DEV">
+  <Navbar variant="p5" />
+  <section id="Home">
+    <Hero />
+  </section>
+  <TransitP3P4 />
+  <section id="Skills" style="margin: 0; padding: 0;">
+  <Tecs />
+  </section>
+  <TransitP4P5 />
+  <section id="Projects">
+    <Projects />
+  </section>
+  <TransitP5aMemento />
+  <section id="Contacts" style="margin: 0; padding: 0;">
+    <Contacts />
+  </section>
+</Layout>

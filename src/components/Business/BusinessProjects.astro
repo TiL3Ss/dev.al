@@ -1,0 +1,60 @@
+---
+import styles from './Business.module.css';
+import { getProjects, type Project } from '../../lib/projects';
+
+export const prerender = false;
+
+// Los proyectos vienen únicamente de Turso — sin datos hardcodeados
+// de respaldo. Si la tabla está vacía la sección no muestra nada.
+let projects: Project[] = [];
+try {
+  projects = await getProjects();
+} catch (err) {
+  console.error('[BusinessProjects] No se pudo leer de Turso:', err);
+}
+
+// Misma lógica de link de repo que la sección Projects principal.
+const GITHUB_USER = 'TiL3Ss';
+function slugify(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/\./g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+function githubUrl(p: Project) {
+  return p.link ?? `https://github.com/${GITHUB_USER}/${slugify(p.title)}`;
+}
+
+// Quita el markup (<strong>, <span class="kw">) que la descripción trae
+// para la versión cómic; acá se muestra como texto plano.
+function plainText(html: string) {
+  return html.replace(/<[^>]+>/g, '');
+}
+---
+
+<section id="Projects" class={styles.projects}>
+  <h2 class={styles.sectionTitle}>Proyectos</h2>
+  <p class={styles.sectionSub}>— selección de trabajos personales —</p>
+
+  <div class={styles.projectsList}>
+    {projects.map((p, idx) => (
+      <article class={styles.projectCard}>
+        <div class={styles.projectCardHead}>
+          <span class={styles.projectIndex}>{String(idx + 1).padStart(2, '0')}.</span>
+          <h3 class={styles.projectTitle}>{p.title}</h3>
+        </div>
+        <p class={styles.projectDesc}>{plainText(p.description)}</p>
+        <p class={styles.projectTechs}>Stack: {p.techs.join(' · ')}</p>
+        <a
+          class={styles.projectLink}
+          href={githubUrl(p)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          [ Ver repositorio ]
+        </a>
+      </article>
+    ))}
+  </div>
+</section>

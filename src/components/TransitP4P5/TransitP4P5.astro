@@ -1,0 +1,59 @@
+---
+import styles from './TransitP4P5.module.css';
+
+const letters = ['T','A','K','E',' ','Y','O','U','R',' ','T','I','M','E'];
+const angles  = [-8, 5, -12, 7, 0, -5, 9, -7, 11, 0, -9, 6, -11, 8];
+---
+
+<div class={styles.transit}>
+
+
+
+  <!-- ── Velo de fusión superior con Tecs ── -->
+  <div class={styles.topFade}></div>
+
+  <!-- Capas diagonales negras y blancas (clip-path) -->
+  <div class={styles.slashBlack1}></div>
+  <div class={styles.slashWhite1}></div>
+  <div class={styles.slashBlack2}></div>
+
+  <!-- Partículas cuadradas rojas en zona inferior -->
+  <div class={styles.particles}>
+    <div class={`${styles.particle} ${styles.p1}`}></div>
+    <div class={`${styles.particle} ${styles.p2}`}></div>
+    <div class={`${styles.particle} ${styles.p3}`}></div>
+    <div class={`${styles.particle} ${styles.p4}`}></div>
+    <div class={`${styles.particle} ${styles.p5}`}></div>
+    <div class={`${styles.particle} ${styles.p6}`}></div>
+    <div class={`${styles.particle} ${styles.p7}`}></div>
+    <div class={`${styles.particle} ${styles.p8}`}></div>
+    <div class={`${styles.particle} ${styles.p9}`}></div>
+    <div class={`${styles.particle} ${styles.p10}`}></div>
+  </div>
+
+  <!-- Formas flotantes P5 (rombos / estrellas de 4 puntas) -->
+  <div class={styles.shapes}>
+    <div class={`${styles.shape} ${styles.sh1}`}></div>
+    <div class={`${styles.shape} ${styles.sh2}`}></div>
+    <div class={`${styles.shape} ${styles.sh3}`}></div>
+    <div class={`${styles.shape} ${styles.sh4}`}></div>
+    <div class={`${styles.shape} ${styles.sh5}`}></div>
+    <div class={`${styles.shape} ${styles.sh6}`}></div>
+  </div>
+
+  <!-- Bloque de texto collage -->
+  <div class={styles.callCard}>
+    {letters.map((letter, i) => (
+      letter === ' '
+        ? <span class={styles.space}>&nbsp;</span>
+        : <span
+            class={styles.letter}
+            style={`--angle: ${angles[i]}deg; --i: ${i}`}
+          >{letter}</span>
+    ))}
+  </div>
+
+  <!-- Banda roja P5 emergiendo desde abajo -->
+  <div class={styles.redBand}></div>
+
+</div>

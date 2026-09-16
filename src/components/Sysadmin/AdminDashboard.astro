@@ -1,0 +1,433 @@
+---
+// Panel de /sysadmin — Astro puro + JS vanilla (sin React), mismo
+// patrón que el resto del sitio (ej. Contacts.astro): la interactividad
+// va en un <script> de cliente, no en un framework de componentes.
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  logo: string;
+  logoAlt: string;
+  techs: string[];
+  link?: string;
+}
+interface Skill {
+  id: string;
+  category: string;
+  name: string;
+  rank: number;
+  sortOrder: number;
+}
+interface ContactMessageRecord {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  createdAt: string;
+}
+
+interface Props {
+  initialProjects: Project[];
+  initialSkills: Skill[];
+  initialMessages: ContactMessageRecord[];
+}
+const { initialProjects, initialSkills, initialMessages } = Astro.props;
+
+const skillsByCategory = initialSkills.reduce<Record<string, Skill[]>>((acc, s) => {
+  (acc[s.category] ??= []).push(s);
+  return acc;
+}, {});
+
+const card = 'bg-[#131a3a] border border-[#c9a24b]/25 rounded-sm';
+const inputCls =
+  'w-full bg-[#0a0e24] border border-[#c9a24b]/30 rounded-sm px-3 py-2 text-sm text-[#e4f0ff] placeholder:text-[#e4f0ff]/30 focus:outline-none focus:border-[#8ab0ff]';
+const labelCls = 'block text-[10px] tracking-wider uppercase text-[#e4f0ff]/50 mb-1';
+const btnPrimary =
+  'water-hover px-4 py-2 text-xs font-bold tracking-wide uppercase bg-[#8ab0ff] text-[#0a0e24] rounded-sm transition-colors';
+const btnGhost =
+  'water-hover px-3 py-1.5 text-xs tracking-wide uppercase border border-[#e4f0ff]/25 text-[#e4f0ff]/80 rounded-sm hover:border-[#8ab0ff] hover:text-[#8ab0ff] transition-colors';
+const btnDanger =
+  'water-hover px-3 py-1.5 text-xs tracking-wide uppercase border border-red-500/40 text-red-300 rounded-sm transition-colors';
+---
+
+<div
+  class="min-h-screen bg-gradient-to-b from-[#0a0e24] to-[#050711] text-[#e4f0ff]"
+  style="font-family:'BM Space','Cinzel','Arial Black',Arial,sans-serif;"
+>
+  <header class="flex items-center justify-between border-b border-[#c9a24b]/25 px-6 py-4">
+    <div>
+      <h1 class="text-lg tracking-[3px]">SYSADMIN</h1>
+      <p class="text-[10px] tracking-widest text-[#e4f0ff]/40 mt-1">AL.DEV — PANEL DE CONTROL</p>
+    </div>
+    <div class="flex gap-2">
+      <a href="/" class={btnGhost}>← Volver al home</a>
+      <button id="logoutBtn" class={btnGhost}>Cerrar sesión</button>
+    </div>
+  </header>
+
+  <nav class="flex gap-1 px-6 pt-4">
+    <button data-tab-btn="projects" class="tabBtn px-4 py-2 text-xs tracking-wider uppercase border-b-2 border-[#8ab0ff] text-[#8ab0ff]">Proyectos</button>
+    <button data-tab-btn="skills" class="tabBtn px-4 py-2 text-xs tracking-wider uppercase border-b-2 border-transparent text-[#e4f0ff]/50">Skills</button>
+    <button data-tab-btn="messages" class="tabBtn px-4 py-2 text-xs tracking-wider uppercase border-b-2 border-transparent text-[#e4f0ff]/50">
+      Mensajes{initialMessages.length ? ` (${initialMessages.length})` : ''}
+    </button>
+  </nav>
+
+  <main class="p-6 max-w-4xl mx-auto">
+    <p id="errorBox" class="hidden mb-4 border border-red-500/40 bg-red-500/10 text-red-300 text-sm px-4 py-2 rounded-sm"></p>
+
+    <!-- ══ PROYECTOS ══ -->
+    <section data-tab-panel="projects" class="space-y-6">
+      <form id="projectForm" class={`${card} p-5 space-y-4`}>
+        <h2 id="projectFormTitle" class="text-sm tracking-widest text-[#8ab0ff]">NUEVO PROYECTO</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class={labelCls}>ID (slug único)</label>
+            <input id="p-id" class={inputCls} required placeholder="proj-4" />
+          </div>
+          <div>
+            <label class={labelCls}>Título</label>
+            <input id="p-title" class={inputCls} required placeholder="NOMBRE DEL PROYECTO" />
+          </div>
+        </div>
+        <div>
+          <label class={labelCls}>Descripción (admite &lt;strong&gt; y &lt;span class="kw"&gt;)</label>
+          <textarea id="p-description" class={`${inputCls} min-h-[80px]`} required></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class={labelCls}>Logo (ruta)</label>
+            <input id="p-logo" class={inputCls} value="/IMG/logo.svg" />
+          </div>
+          <div>
+            <label class={labelCls}>Alt del logo</label>
+            <input id="p-logoAlt" class={inputCls} />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class={labelCls}>Tecnologías (separadas por coma)</label>
+            <input id="p-techs" class={inputCls} placeholder="Astro, TypeScript, CSS" />
+          </div>
+          <div>
+            <label class={labelCls}>Link de GitHub (opcional — si no, se calcula solo)</label>
+            <input id="p-link" class={inputCls} placeholder="https://github.com/TiL3Ss/..." />
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button type="submit" id="p-submit" class={btnPrimary}>Crear proyecto</button>
+          <button type="button" id="p-cancel" class={`${btnGhost} hidden`}>Cancelar</button>
+        </div>
+      </form>
+
+      <div id="projectsList" class="space-y-2">
+        {initialProjects.map((p) => (
+          <div class={`${card} p-4 flex items-center justify-between gap-4`} data-project-row={p.id}>
+            <div>
+              <p class="text-sm font-bold">{p.title} <span class="text-[10px] text-[#e4f0ff]/40 font-normal">({p.id})</span></p>
+              <p class="text-xs text-[#e4f0ff]/50 mt-1">{p.techs.join(' · ')}</p>
+            </div>
+            <div class="flex gap-2 shrink-0">
+              <button
+                class={`${btnGhost} editProjectBtn`}
+                data-project={JSON.stringify(p)}
+              >Editar</button>
+              <button class={`${btnDanger} deleteProjectBtn`} data-id={p.id}>Borrar</button>
+            </div>
+          </div>
+        ))}
+        {initialProjects.length === 0 && <p class="text-sm text-[#e4f0ff]/40">No hay proyectos todavía.</p>}
+      </div>
+    </section>
+
+    <!-- ══ SKILLS ══ -->
+    <section data-tab-panel="skills" class="hidden space-y-6">
+      <form id="skillForm" class={`${card} p-5 space-y-4`}>
+        <h2 id="skillFormTitle" class="text-sm tracking-widest text-[#8ab0ff]">NUEVO SKILL</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class={labelCls}>ID (slug único)</label>
+            <input id="s-id" class={inputCls} required placeholder="skill-25" />
+          </div>
+          <div>
+            <label class={labelCls}>Categoría</label>
+            <input id="s-category" class={inputCls} required placeholder="FRONTEND" />
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class={labelCls}>Nombre</label>
+            <input id="s-name" class={inputCls} required placeholder="TypeScript" />
+          </div>
+          <div>
+            <label class={labelCls}>Rank (1-10)</label>
+            <input id="s-rank" type="number" min="1" max="10" class={inputCls} value="5" />
+          </div>
+          <div>
+            <label class={labelCls}>Orden</label>
+            <input id="s-sortOrder" type="number" class={inputCls} value="0" />
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button type="submit" id="s-submit" class={btnPrimary}>Crear skill</button>
+          <button type="button" id="s-cancel" class={`${btnGhost} hidden`}>Cancelar</button>
+        </div>
+      </form>
+
+      <div id="skillsList" class="space-y-5">
+        {Object.entries(skillsByCategory).map(([cat, list]) => (
+          <div>
+            <h3 class="text-xs tracking-widest text-[#e4f0ff]/50 mb-2">{cat}</h3>
+            <div class="space-y-2">
+              {list.map((s) => (
+                <div class={`${card} p-3 flex items-center justify-between gap-4`} data-skill-row={s.id}>
+                  <p class="text-sm">{s.name} <span class="text-[#e4f0ff]/40 text-xs">— {s.rank}/10</span></p>
+                  <div class="flex gap-2 shrink-0">
+                    <button class={`${btnGhost} editSkillBtn`} data-skill={JSON.stringify(s)}>Editar</button>
+                    <button class={`${btnDanger} deleteSkillBtn`} data-id={s.id}>Borrar</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        {initialSkills.length === 0 && <p class="text-sm text-[#e4f0ff]/40">No hay skills todavía.</p>}
+      </div>
+    </section>
+
+    <!-- ══ MENSAJES ══ -->
+    <section data-tab-panel="messages" class="hidden space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm tracking-widest text-[#8ab0ff]">HISTORIAL DE MENSAJES</h2>
+      </div>
+      <div id="messagesList" class="space-y-3">
+        {initialMessages.map((m) => (
+          <div class={`${card} p-4`} data-message-row={m.id}>
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="text-sm font-bold">{m.name} <span class="text-[#e4f0ff]/40 text-xs font-normal">&lt;{m.email}&gt;</span></p>
+                <p class="text-[10px] text-[#e4f0ff]/35 mt-0.5">{new Date(m.createdAt.replace(' ', 'T') + 'Z').toLocaleString()}</p>
+              </div>
+              <button class={`${btnDanger} deleteMessageBtn`} data-id={m.id}>Borrar</button>
+            </div>
+            <p class="text-sm text-[#e4f0ff]/80 mt-3 whitespace-pre-wrap">{m.message}</p>
+          </div>
+        ))}
+        {initialMessages.length === 0 && <p class="text-sm text-[#e4f0ff]/40">Todavía no llegó ningún mensaje.</p>}
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  function $<T extends HTMLElement>(sel: string): T {
+    return document.querySelector(sel) as T;
+  }
+  function showError(msg: string) {
+    const box = $('#errorBox');
+    box.textContent = msg;
+    box.classList.remove('hidden');
+  }
+  function clearError() {
+    const box = $('#errorBox');
+    box.classList.add('hidden');
+    box.textContent = '';
+  }
+
+  // ── Tabs ──
+  const tabBtns = document.querySelectorAll<HTMLButtonElement>('.tabBtn');
+  const tabPanels = document.querySelectorAll<HTMLElement>('[data-tab-panel]');
+  tabBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tabBtn;
+      tabBtns.forEach((b) => {
+        const active = b === btn;
+        b.classList.toggle('border-[#8ab0ff]', active);
+        b.classList.toggle('text-[#8ab0ff]', active);
+        b.classList.toggle('border-transparent', !active);
+        b.classList.toggle('text-[#e4f0ff]/50', !active);
+      });
+      tabPanels.forEach((p) => p.classList.toggle('hidden', p.dataset.tabPanel !== target));
+    });
+  });
+
+  // ── Logout ──
+  $('#logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/sysadmin/logout', { method: 'POST' });
+    window.location.href = '/sysadmin';
+  });
+
+  // ── Proyectos ──
+  const pForm = $<HTMLFormElement>('#projectForm');
+  const pCancel = $<HTMLButtonElement>('#p-cancel');
+  const pSubmit = $<HTMLButtonElement>('#p-submit');
+  const pFormTitle = $('#projectFormTitle');
+  let editingProjectId: string | null = null;
+
+  function resetProjectForm() {
+    editingProjectId = null;
+    pForm.reset();
+    ($('#p-id') as HTMLInputElement).disabled = false;
+    ($('#p-logo') as HTMLInputElement).value = '/IMG/logo.svg';
+    pFormTitle.textContent = 'NUEVO PROYECTO';
+    pSubmit.textContent = 'Crear proyecto';
+    pCancel.classList.add('hidden');
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.editProjectBtn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const p = JSON.parse(btn.dataset.project ?? '{}');
+      editingProjectId = p.id;
+      ($('#p-id') as HTMLInputElement).value = p.id;
+      ($('#p-id') as HTMLInputElement).disabled = true;
+      ($('#p-title') as HTMLInputElement).value = p.title;
+      ($('#p-description') as HTMLTextAreaElement).value = p.description;
+      ($('#p-logo') as HTMLInputElement).value = p.logo;
+      ($('#p-logoAlt') as HTMLInputElement).value = p.logoAlt;
+      ($('#p-techs') as HTMLInputElement).value = (p.techs ?? []).join(', ');
+      ($('#p-link') as HTMLInputElement).value = p.link ?? '';
+      pFormTitle.textContent = 'EDITAR PROYECTO';
+      pSubmit.textContent = 'Guardar cambios';
+      pCancel.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+  pCancel.addEventListener('click', resetProjectForm);
+
+  pForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError();
+    const techs = ($('#p-techs') as HTMLInputElement).value.split(',').map((t) => t.trim()).filter(Boolean);
+    const body = {
+      id: ($('#p-id') as HTMLInputElement).value.trim(),
+      title: ($('#p-title') as HTMLInputElement).value.trim(),
+      description: ($('#p-description') as HTMLTextAreaElement).value.trim(),
+      logo: ($('#p-logo') as HTMLInputElement).value.trim(),
+      logoAlt: ($('#p-logoAlt') as HTMLInputElement).value.trim(),
+      techs,
+      link: ($('#p-link') as HTMLInputElement).value.trim() || undefined,
+    };
+    pSubmit.disabled = true;
+    try {
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'No se pudo guardar');
+      window.location.reload();
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Error desconocido');
+      pSubmit.disabled = false;
+    }
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('.deleteProjectBtn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id!;
+      if (!confirm(`¿Borrar el proyecto "${id}"?`)) return;
+      clearError();
+      try {
+        const res = await fetch(`/api/projects?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? 'No se pudo borrar');
+        window.location.reload();
+      } catch (err) {
+        showError(err instanceof Error ? err.message : 'Error desconocido');
+      }
+    });
+  });
+
+  // ── Skills ──
+  const sForm = $<HTMLFormElement>('#skillForm');
+  const sCancel = $<HTMLButtonElement>('#s-cancel');
+  const sSubmit = $<HTMLButtonElement>('#s-submit');
+  const sFormTitle = $('#skillFormTitle');
+
+  function resetSkillForm() {
+    sForm.reset();
+    ($('#s-id') as HTMLInputElement).disabled = false;
+    ($('#s-rank') as HTMLInputElement).value = '5';
+    ($('#s-sortOrder') as HTMLInputElement).value = '0';
+    sFormTitle.textContent = 'NUEVO SKILL';
+    sSubmit.textContent = 'Crear skill';
+    sCancel.classList.add('hidden');
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.editSkillBtn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const s = JSON.parse(btn.dataset.skill ?? '{}');
+      ($('#s-id') as HTMLInputElement).value = s.id;
+      ($('#s-id') as HTMLInputElement).disabled = true;
+      ($('#s-category') as HTMLInputElement).value = s.category;
+      ($('#s-name') as HTMLInputElement).value = s.name;
+      ($('#s-rank') as HTMLInputElement).value = String(s.rank);
+      ($('#s-sortOrder') as HTMLInputElement).value = String(s.sortOrder ?? 0);
+      sFormTitle.textContent = 'EDITAR SKILL';
+      sSubmit.textContent = 'Guardar cambios';
+      sCancel.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+  sCancel.addEventListener('click', resetSkillForm);
+
+  sForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError();
+    const body = {
+      id: ($('#s-id') as HTMLInputElement).value.trim(),
+      category: ($('#s-category') as HTMLInputElement).value.trim(),
+      name: ($('#s-name') as HTMLInputElement).value.trim(),
+      rank: Number(($('#s-rank') as HTMLInputElement).value),
+      sortOrder: Number(($('#s-sortOrder') as HTMLInputElement).value) || 0,
+    };
+    sSubmit.disabled = true;
+    try {
+      const res = await fetch('/api/skills', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'No se pudo guardar');
+      window.location.reload();
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'Error desconocido');
+      sSubmit.disabled = false;
+    }
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('.deleteSkillBtn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id!;
+      if (!confirm('¿Borrar este skill?')) return;
+      clearError();
+      try {
+        const res = await fetch(`/api/skills?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? 'No se pudo borrar');
+        window.location.reload();
+      } catch (err) {
+        showError(err instanceof Error ? err.message : 'Error desconocido');
+      }
+    });
+  });
+
+  // ── Mensajes ──
+  document.querySelectorAll<HTMLButtonElement>('.deleteMessageBtn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id!;
+      if (!confirm('¿Borrar este mensaje del historial?')) return;
+      clearError();
+      try {
+        const res = await fetch(`/api/messages?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? 'No se pudo borrar');
+        window.location.reload();
+      } catch (err) {
+        showError(err instanceof Error ? err.message : 'Error desconocido');
+      }
+    });
+  });
+</script>

@@ -1,0 +1,43 @@
+---
+import styles from './TransitP5aMemento.module.css';
+
+const letters = ['W','E','L','C','O','M','E',' ','T','O',' ','M','E','M','E','N','T','O','S'];
+const angles  = [-7, 5, -10, 8, -4, 6, -9, 0, 7, -6, 0, -8, 5, -11, 6, -5, 9, -7, 4];
+---
+
+<div class={styles.transit}>
+
+  <!-- Capas diagonales negras y blancas (clip-path) — franja de
+       contraste en el medio, no tocan los bordes (quedan rojo puro
+       arriba y abajo, fusionado con Projects/Contacts) -->
+  <div class={styles.slashBlack1}></div>
+  <div class={styles.slashWhite1}></div>
+  <div class={styles.slashBlack2}></div>
+
+  <!-- Partículas cayendo (no flotando) — ya empezás a caer -->
+  <div class={styles.particles}>
+    <div class={`${styles.particle} ${styles.p1}`}></div>
+    <div class={`${styles.particle} ${styles.p2}`}></div>
+    <div class={`${styles.particle} ${styles.p3}`}></div>
+    <div class={`${styles.particle} ${styles.p4}`}></div>
+    <div class={`${styles.particle} ${styles.p5}`}></div>
+    <div class={`${styles.particle} ${styles.p6}`}></div>
+    <div class={`${styles.particle} ${styles.p7}`}></div>
+    <div class={`${styles.particle} ${styles.p8}`}></div>
+    <div class={`${styles.particle} ${styles.p9}`}></div>
+    <div class={`${styles.particle} ${styles.p10}`}></div>
+  </div>
+
+  <!-- Bloque de texto collage -->
+  <div class={styles.callCard}>
+    {letters.map((letter, i) => (
+      letter === ' '
+        ? <span class={styles.space}>&nbsp;</span>
+        : <span
+            class={styles.letter}
+            style={`--angle: ${angles[i]}deg; --i: ${i}`}
+          >{letter}</span>
+    ))}
+  </div>
+
+</div>
